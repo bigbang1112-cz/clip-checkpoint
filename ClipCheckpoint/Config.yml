@@ -1,0 +1,64 @@
+# Aspect ratio used to space out and scale elements. Unless you have a different monitor aspect ratio, 16:9 works the best universally.
+AspectRatio: [16, 9]
+# Scale of the checkpoint display.
+Scale: [1, 1]
+# Position of the checkpoint display.
+Position: [0, 0.5]
+# Depth (Z distance) of the checkpoint display.
+Depth: 0.5
+# Max length of each checkpoint display in seconds.
+Length: 2
+# Volume of the checkpoint sound.
+Volume: 1
+# Color of the main checkpoint time text.
+Color: [1, 1, 1]
+# Color of the shadow of the main checkpoint time text.
+ShadowColor: [0, 0, 0]
+# Height (distance) of the shadow of the main checkpoint time text.
+ShadowHeight: [0.005, 0.005]
+# Depth (Z distance) offset of the shadow of the main checkpoint time text (added on Depth).
+ShadowDepthOffset: 0.5
+# Position offset of the lap time text (added on Position).
+LapTimePositionOffset: [0, 0.1]
+# Scale of the lap time text (multiplied on Scale).
+LapTimeScale: [0.75, 0.75]
+# Color of the main checkpoint time.
+LapTimeColor: [1, 1, 0]
+# Length of the start of the animation.
+AnimationInLength: 0.1
+# Length of the end of the animation.
+AnimationOutLength: 0.2
+# Starting scale of the animation.
+AnimationInScale: [0.9, 0.9]
+# Ending scale of the animation.
+AnimationOutScale: [1, 1]
+# If the main checkpoint text should be included on finish (finish is also taken as checkpoint).
+IncludeFinish: false
+# If the sound should be included.
+IncludeSound: true
+# Name of the checkpoint time text track.
+TrackNameCheckpointTime: CP TIME
+# Name of the checkpoint time shadow text track.
+TrackNameCheckpointTimeShadow: CP TIME SH
+# Name of the checkpoint sound track.
+TrackNameCheckpointSound: CP SOUND
+# Name of the checkpoint lap text track.
+TrackNameCheckpointLap: CP LAP
+# Format of the main checkpoint time text. {0} is the time (X:XX.XXX or X:XX.XX)
+TextCheckpointFormat: $o$n{0}
+# Format of the lap time text. {0} is the lap time (X:XX.XXX or X:XX.XX)
+TextLapFormat: $o$n$s{0}
+# Format of the stunts score addition to the main checkpoint time text. {0} is the stunts score.
+TextStuntsFormat: ({0} pts.)
+# URL location of the regular checkpoint sound (must be ogg).
+CheckpointSoundUrl: https://bigbang1112.cz/temp/RaceCheckPoint.ogg
+# URL location of the lap sound (must be ogg).
+LapSoundUrl: https://bigbang1112.cz/temp/RaceLap.ogg
+# URL location of the Snow environment checkpoint sound (must be ogg).
+AlpineCheckpointSoundUrl: https://bigbang1112.cz/temp/AlpineCheckPoint.ogg
+# URL location of the Rally environment checkpoint sound (must be ogg).
+RallyCheckpointSoundUrl: https://bigbang1112.cz/temp/RallyCheckPoint.ogg
+# URL location of the Desert environment checkpoint sound (must be ogg).
+SpeedCheckpointSoundUrl: https://bigbang1112.cz/temp/SpeedCheckPoint.ogg
+# Allows support for TMU and TMS but limits support for TM2 and TM2020. TMUF support isn't affected.
+Legacy: false
