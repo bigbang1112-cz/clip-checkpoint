@@ -219,19 +219,19 @@ public class ClipCheckpointIO
                 var endingKey = mediaBlock.Effect.Keys.Last();
                 var nextStartingKey = nextMediaBlock.Effect.Keys.First();
 
-                if (nextStartingKey.Time < endingKey.Time)
+                if (nextStartingKey.Time >= endingKey.Time)
+                    continue;
+
+                var timeDifference = endingKey.Time - nextStartingKey.Time;
+
+                if (timeDifference > Config.AnimationOutLength)
                 {
-                    var timeDifference = endingKey.Time - nextStartingKey.Time;
-
-                    if (timeDifference > Config.AnimationOutLength)
-                    {
-                        mediaBlock.Effect.Keys.RemoveAt(mediaBlock.Effect.Keys.Count - 1);
-                        mediaBlock.Effect.Keys.Last().Time = nextStartingKey.Time;
-                        continue;
-                    }
-
-                    endingKey.Time = nextStartingKey.Time;
+                    mediaBlock.Effect.Keys.RemoveAt(mediaBlock.Effect.Keys.Count - 1);
+                    mediaBlock.Effect.Keys.Last().Time = nextStartingKey.Time;
+                    continue;
                 }
+
+                endingKey.Time = nextStartingKey.Time;
             }
         }
     }

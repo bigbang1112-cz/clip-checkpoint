@@ -1,4 +1,5 @@
 ﻿using BigBang1112.ClipCheckpoint.Converters;
+using BigBang1112.ClipCheckpoint.Exceptions;
 using GBX.NET;
 using GBX.NET.Engines.Game;
 using System;
@@ -42,10 +43,14 @@ class Program
 
         Console.Write("Reading the GBX file... ");
         var node = GameBox.ParseNode(fileName);
-        Console.WriteLine("Done");
 
         if (node is null)
+        {
+            Console.WriteLine("GBX is not readable by the program.");
             return;
+        }
+
+        Console.WriteLine("Done");
 
         var config = GetOrCreateConfig();
         var io = new ClipCheckpointIO(node, config);
@@ -55,6 +60,20 @@ class Program
         try
         {
             result = io.Execute();
+        }
+        catch (NoGhostException ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(ex.Message);
+            Console.ResetColor();
+            return;
+        }
+        catch (NoCheckpointsException ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(ex.Message);
+            Console.ResetColor();
+            return;
         }
         catch (Exception ex)
         {
