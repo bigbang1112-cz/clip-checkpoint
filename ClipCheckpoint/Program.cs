@@ -18,7 +18,7 @@ class Program
         if (args.Length == 0) return;
 
         var suffix = "-CPs";
-        var outputFolder = "Output";
+        var outputFolder = Path.Combine(rootPath, "Output");
 
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
