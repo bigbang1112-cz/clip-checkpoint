@@ -19,6 +19,7 @@ Currently the tool can read inputs from these files:
 ### Where can I import the outputted Clip.Gbx?
 
 - TrackMania Sunrise (`Legacy: true`)
+- TrackMania Nations ESWC (`Legacy: true`)
 - TrackMania United (`Legacy: true`)
 - TrackMania United Forever
 - TrackMania Nations Forever
@@ -34,7 +35,8 @@ Currently the tool can read inputs from these files:
 - TM2020: Documents/Trackmania/Replays/Clips
 
 Legacy versions:
-- TMs: TrackMania Sunrise/GameData/Tracks
+- TMS: TrackMania Sunrise/GameData/Tracks
+- TMESWC: TrackMania Nations ESWC/GameData/Tracks
 - TMU: Documents/TrackMania United/Tracks
 
 Feel free to organize the foldering inside these folders.
