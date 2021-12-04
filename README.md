@@ -20,18 +20,19 @@ Where can I import the outputted Clip.Gbx?
 - TrackMania Sunrise (`Legacy: true`)
 - TrackMania United (`Legacy: true`)
 - TrackMania United Forever
+- TrackMania Nations Forever
 - TrackMania 2
 - Trackmania Turbo
 - Trackmania (2020)
 
 Where should the clip files be copied to?
-- TM2020: Documents/Trackmania/Replays/Clips
-- TM2: Documents/ManiaPlanet/Replays/Clips
+- TMUF/TMNF: Documents/TrackMania/Tracks
 - TMTurbo: Documents/TrackmaniaTurbo/Replays/Clips
-- TMUF: Documents/TrackMania/Tracks
+- TM2: Documents/ManiaPlanet/Replays/Clips
+- TM2020: Documents/Trackmania/Replays/Clips
 Legacy versions:
-- TMU: Documents/TrackMania United/Tracks
 - TMs: TrackMania Sunrise/GameData/Tracks
+- TMU: Documents/TrackMania United/Tracks
 
 Feel free to organize the foldering inside these folders.
 
