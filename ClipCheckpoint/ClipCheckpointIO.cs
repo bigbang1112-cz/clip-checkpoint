@@ -39,10 +39,9 @@ public class ClipCheckpointIO
     {
         Console.Write("Extracting number of laps... ");
         var laps = GetNumberOfLaps(Input.Validate_RaceSettings);
-        Console.WriteLine(laps);
 
         var isMultilap = laps > 1;
-        Console.WriteLine(isMultilap ? "Multiple laps detected." : "No laps detected.");
+        Console.WriteLine(isMultilap ? "Multiple laps ({0})" : "No laps", laps);
 
         var isFromTM2 = IsFromTM2();
         Console.WriteLine(isFromTM2 ? "Ghost is from TM2 or higher version." : "Ghost is from TMUF or lower version.");
@@ -153,8 +152,8 @@ public class ClipCheckpointIO
         }
 
         Console.Write("Cleaning up overlapping... ");
-        CleanOverlappingOnText(textMediaBlocks, textShadowMediaBlocks, textMultilapMediaBlocks);
-        CleanOverlappingOnSound(soundMediaBlocks);
+        ClearOverlappingOnText(textMediaBlocks, textShadowMediaBlocks, textMultilapMediaBlocks);
+        ClearOverlappingOnSound(soundMediaBlocks);
         Console.WriteLine("Done");
 
         Console.Write("Creating checkpoint text and shadow media tracks for the media blocks... ");
@@ -207,7 +206,7 @@ public class ClipCheckpointIO
         throw new NoGhostException();
     }
 
-    private void CleanOverlappingOnText(params CGameCtnMediaBlockText[][] textMediaBlockSets)
+    private void ClearOverlappingOnText(params CGameCtnMediaBlockText[][] textMediaBlockSets)
     {
         foreach (var mediaBlocks in textMediaBlockSets)
         {
@@ -236,7 +235,7 @@ public class ClipCheckpointIO
         }
     }
 
-    private static void CleanOverlappingOnSound(CGameCtnMediaBlockSound[] mediaBlocks)
+    private static void ClearOverlappingOnSound(CGameCtnMediaBlockSound[] mediaBlocks)
     {
         for (var i = 0; i < mediaBlocks.Length - 1; i++)
         {

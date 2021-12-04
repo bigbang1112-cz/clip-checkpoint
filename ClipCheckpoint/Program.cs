@@ -16,7 +16,12 @@ class Program
 
     static void Main(string[] args)
     {
-        if (args.Length == 0) return;
+        if (args.Length == 0)
+        {
+            Console.Write("Please drag and drop GBX files onto the executable. Press any key to continue...");
+            Console.ReadKey(intercept: true);
+            return;
+        }
 
         var suffix = "-CPs";
         var outputFolder = Path.Combine(rootPath, "Output");
