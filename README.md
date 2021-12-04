@@ -16,7 +16,8 @@ Currently the tool can read inputs from these files:
 - Ghost.Gbx
 - Clip.Gbx (that contains minimally 1 ghost)
 
-Where can I import the outputted Clip.Gbx?
+### Where can I import the outputted Clip.Gbx?
+
 - TrackMania Sunrise (`Legacy: true`)
 - TrackMania United (`Legacy: true`)
 - TrackMania United Forever
@@ -25,7 +26,8 @@ Where can I import the outputted Clip.Gbx?
 - Trackmania Turbo
 - Trackmania (2020)
 
-Where should the clip files be copied to?
+### Where should the clip files be copied to?
+
 - TMUF/TMNF: Documents/TrackMania/Tracks
 - TMTurbo: Documents/TrackmaniaTurbo/Replays/Clips
 - TM2: Documents/ManiaPlanet/Replays/Clips
