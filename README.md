@@ -30,6 +30,7 @@ Where should the clip files be copied to?
 - TMTurbo: Documents/TrackmaniaTurbo/Replays/Clips
 - TM2: Documents/ManiaPlanet/Replays/Clips
 - TM2020: Documents/Trackmania/Replays/Clips
+
 Legacy versions:
 - TMs: TrackMania Sunrise/GameData/Tracks
 - TMU: Documents/TrackMania United/Tracks
