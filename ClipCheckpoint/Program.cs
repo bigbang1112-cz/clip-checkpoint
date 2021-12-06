@@ -13,20 +13,52 @@ namespace BigBang1112.ClipCheckpoint;
 class Program
 {
     static readonly string rootPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "/";
+    static bool deltaFlag = false; // Added a flag for delta comparison
 
     static void Main(string[] args)
     {
         if (args.Length == 0)
         {
-            Console.Write("Please drag and drop GBX files onto the executable. Press any key to continue...");
-            Console.ReadKey(intercept: true);
-            return;
+                Console.Write("Please drag and drop GBX files onto the executable. Press any key to continue...");
+                Console.ReadKey(intercept: true);
+                return;
+        }
+        else if (args.Length > 1) // If there are more than 1 replays we ask if we would like to compare deltas.
+        {
+            System.Console.WriteLine("Would you like to compare deltas of the replays? (Y/N)");
+            switch (Console.ReadLine())
+            {
+                case "Y":
+                case "y":
+                    deltaFlag = true;
+                    break;
+                default:
+                    break;
+            }
         }
 
         var suffix = "-CPs";
         var outputFolder = Path.Combine(rootPath, "Output");
 
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+
+        if (deltaFlag)
+        {
+            suffix = "-Deltas";
+            // Ask the user which replay will be compared to
+            System.Console.WriteLine("Fetched replays:");
+            for (int i = 0; i < args.Length - 1; i++)
+            {
+                System.Console.WriteLine("{0}| {1}", i, args[i]);
+            }
+            System.Console.WriteLine("Please enter the number of the replay that will be used as the comparer (ALL other replays will be compared to this replay!)");
+            while (!int.TryParse(Console.ReadLine(), out int deltaIndex))
+            {
+                System.Console.WriteLine("Didn't recieve a number!");
+                Console.ReadKey(intercept: true);
+
+            }
+        }
 
         foreach (var fileName in args)
         {
