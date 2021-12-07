@@ -13,7 +13,7 @@ Volume: 1
 # Color of the main checkpoint time text.
 Color: [1, 1, 1]
 # Color of the delta - checkpoint time text.
-DeltaNegativeColor: [0, 0, 1]
+DeltaPositiveColor: [0, 0, 1]
 # Color of the delta + checkpoint time text.
 DeltaNegativeColor: [1, 0, 0]
 # Color of the shadow of the main checkpoint time text.
