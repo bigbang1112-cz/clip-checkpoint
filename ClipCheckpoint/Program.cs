@@ -25,7 +25,8 @@ class Program
         }
         else if (args.Length > 1) // If there are more than 1 replays we ask if we would like to compare deltas.
         {
-            System.Console.WriteLine("Would you like to compare deltas of the replays? (Y/N)");
+            System.Console.WriteLine("Detected 2 or more replays.");
+            System.Console.WriteLine("Would you like to compare deltas? (Y/N)");
             switch (Console.ReadLine())
             {
                 case "Y":
@@ -52,7 +53,7 @@ class Program
             {
                 System.Console.WriteLine("{0}| {1}", i, args[i]);
             }
-            System.Console.WriteLine("Please enter the number of the replay that will be used as the comparer (ALL other replays will be compared to this replay!)");
+            System.Console.WriteLine("Please enter the number of the replay to compare to");
             // Loop till we get a real number that fits (is an int and is in range)
             int deltaIndex = -1; // Stores the index of the delta replay in string[] args
             while (deltaIndex == -1 || deltaIndex > args.Length - 1)

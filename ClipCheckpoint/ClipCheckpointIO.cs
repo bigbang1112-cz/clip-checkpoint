@@ -12,11 +12,14 @@ namespace BigBang1112.ClipCheckpoint;
 public class ClipCheckpointIO
 {
     public CGameCtnGhost Input { get; }
+    public CGameCtnGhost DeltaInput { get; }
     public CGameCtnChallenge? Map { get; }
     public ClipCheckpointConfig Config { get; }
+    private bool _deltaFlag;
 
-    public ClipCheckpointIO(CMwNod node, ClipCheckpointConfig? config = null)
+    public ClipCheckpointIO(CMwNod node, ClipCheckpointConfig? config = null, CMwNod? deltaNode = null, bool deltaFlag = false)
     {
+        _deltaFlag = deltaFlag;
         Input = node switch
         {
             CGameCtnReplayRecord replay => GetGhostFromReplay(replay),
@@ -33,6 +36,17 @@ public class ClipCheckpointIO
         }
 
         Config = config ?? new ClipCheckpointConfig();
+
+        if (_deltaFlag)
+        {
+            DeltaInput = deltaNode switch
+            {
+                CGameCtnReplayRecord deltaReplay => GetGhostFromReplay(deltaReplay),
+                CGameCtnGhost deltaGhost => deltaGhost,
+                CGameCtnMediaClip deltaClip => GetFirstGhostFromClip(deltaClip),
+                _ => throw new NoGhostException(),
+            };
+        }
     }
 
     public CGameCtnMediaClip Execute()
@@ -61,6 +75,14 @@ public class ClipCheckpointIO
         }
 
         var checkpoints = Input.Checkpoints;
+        CGameCtnGhost.Checkpoint[] deltaCheckpoints = new CGameCtnGhost.Checkpoint[1];
+
+        if (_deltaFlag)
+        {
+            deltaCheckpoints = DeltaInput.Checkpoints;
+            if (deltaCheckpoints is null || deltaCheckpoints.Length == 0 || deltaCheckpoints.Length != checkpoints.Length)
+                throw new NoCheckpointsException();
+        }
 
         if (checkpoints is null || checkpoints.Length == 0)
             throw new NoCheckpointsException();
@@ -84,11 +106,24 @@ public class ClipCheckpointIO
             Console.WriteLine("Checkpoint {0}:", i + 1);
 
             var cp = checkpoints[i];
+            CGameCtnGhost.Checkpoint deltaCp = new CGameCtnGhost.Checkpoint(null);
+
+            TimeSpan deltaTime;
 
             if (!cp.Time.TryValue(out TimeSpan time))
             {
                 Console.WriteLine("-> -1 time??? Skipping.");
                 continue;
+            }
+
+            if (_deltaFlag)
+            {
+                deltaCp = deltaCheckpoints[i];
+                if (!deltaCp.Time.TryValue(out deltaTime))
+                {
+                    Console.WriteLine("-> -1 time??? Skipping.");
+                    continue;
+                }
             }
 
             // Lap MT blocks - if lap race - and an unique lap time was reached
@@ -119,6 +154,18 @@ public class ClipCheckpointIO
             var timeStr = cp.Time.ToTmString(useHundredths: !isFromTM2);
             var timeText = string.Format(Config.TextCheckpointFormat, timeStr);
 
+            string deltaTimeStr = "";
+            string deltaTimeText = "";
+
+            if (_deltaFlag)
+            {
+                // Calculate interval 
+                TimeSpan? interval = cp.Time - deltaCp.Time;
+                System.Console.WriteLine("The interval is: {0}", interval);
+                deltaTimeStr = interval.ToTmString(useHundredths: !isFromTM2);
+                deltaTimeText = string.Format(Config.TextCheckpointFormat, deltaTimeStr);
+            }
+
             if (Map?.Mode == CGameCtnChallenge.PlayMode.Stunts)
             {
                 timeText += " " + string.Format(Config.TextStuntsFormat, cp.StuntsScore);
@@ -129,6 +176,15 @@ public class ClipCheckpointIO
                 timeText,
                 color: Config.Color);
             Console.WriteLine("Done");
+
+            if (_deltaFlag)
+            {
+                Console.Write("-> Creating checkpoint delta text media block ({0})... ", deltaTimeStr);
+                textMediaBlocks[i] = CreateCheckpointTextMediaBlock(time,
+                    timeText,
+                    color: Config.Color);
+                Console.WriteLine("Done");
+            }
 
             Console.Write("-> Creating checkpoint text shadow media block... ");
             textShadowMediaBlocks[i] = CreateCheckpointTextMediaBlock(time,
