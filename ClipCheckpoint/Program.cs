@@ -49,22 +49,27 @@ class Program
             // Ask the user which replay will be compared to
             System.Console.WriteLine("Fetched replays:");
             // Loop and show user's input file names with index values.
-            for (int i = 0; i < args.Length - 1; i++)
+            for (int i = 0; i < args.Length; i++)
             {
                 System.Console.WriteLine("{0}| {1}", i, args[i]);
             }
             System.Console.WriteLine("Please enter the number of the replay to compare to");
             // Loop till we get a real number that fits (is an int and is in range)
-            int deltaIndex = -1; // Stores the index of the delta replay in string[] args
+            int.TryParse(Console.ReadLine(), out int deltaIndex); // Stores the index of the delta replay in string[] args
             while (deltaIndex == -1 || deltaIndex > args.Length - 1)
             {
-                int.TryParse(Console.ReadLine(), out deltaIndex);
                 System.Console.WriteLine("Didn't recieve a valid number! try again.");
-                Console.ReadKey(intercept: true);
+                int.TryParse(Console.ReadLine(), out deltaIndex);
             }
             // Now that we have a replay to compare to, we can run all files (except the chosen delta) compared to the delta.
-            // TODO Call ProcessFile()
-            // TODO Edit ClipCheckpointIO.cs to fit delta comparison
+            for (int j = 0; j < args.Length; j++)
+            {
+                if (j == deltaIndex)
+                {
+                    continue;
+                }
+                ProcessFile(args[j], suffix, outputFolder, deltaFileName: args[deltaIndex]);
+            }
         }
         else // No delta comparison
         {

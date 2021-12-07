@@ -33,7 +33,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\gbx-net-0.14.1\Src\GBX.NET\GBX.NET.csproj" />
+	  <ProjectReference Include="..\..\gbxdotnet\Src\GBX.NET\GBX.NET.csproj" />
 	</ItemGroup>
 
 </Project>

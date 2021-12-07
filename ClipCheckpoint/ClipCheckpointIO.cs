@@ -156,15 +156,27 @@ public class ClipCheckpointIO
 
             string deltaTimeStr = "";
             string deltaTimeText = "";
+            bool isPositiveDelta = false;
 
             if (_deltaFlag)
             {
                 // Calculate interval 
                 TimeSpan? interval = cp.Time - deltaCp.Time;
+                if (interval?.Ticks > 0)
+                {
+                    isPositiveDelta = true;
+                }
+                else
+                {
+                    isPositiveDelta = false;
+                }
                 System.Console.WriteLine("The interval is: {0}", interval);
                 deltaTimeStr = interval.ToTmString(useHundredths: !isFromTM2);
                 deltaTimeText = string.Format(Config.TextCheckpointFormat, deltaTimeStr);
-                deltaTimeText = timeText + "| D: " + deltaTimeText;
+                if (isPositiveDelta)
+                    deltaTimeText = timeText + "| D: +" + deltaTimeText;
+                else
+                    deltaTimeText = timeText + "| D: " + deltaTimeText;
             }
 
             if (Map?.Mode == CGameCtnChallenge.PlayMode.Stunts)
@@ -180,10 +192,15 @@ public class ClipCheckpointIO
 
             if (_deltaFlag)
             {
+                Vec3 deltaColor = new Vec3(0,0,0);
+                if (isPositiveDelta)
+                    deltaColor = Config.DeltaPositiveColor;
+                else
+                    deltaColor = Config.DeltaNegativeColor;
                 Console.Write("-> Creating checkpoint delta text media block ({0})... ", deltaTimeStr);
                 textMediaBlocks[i] = CreateCheckpointTextMediaBlock(time,
                     deltaTimeText,
-                    color: Config.DeltaColor);
+                    color: deltaColor);
                 Console.WriteLine("Done");
             }
 
@@ -194,6 +211,17 @@ public class ClipCheckpointIO
                 offsetDepth: Config.ShadowDepthOffset,
                 color: Config.ShadowColor);
             Console.WriteLine("Done");
+
+            if (_deltaFlag)
+            {
+                Console.Write("-> Creating checkpoint text shadow media block... ");
+                textShadowMediaBlocks[i] = CreateCheckpointTextMediaBlock(time,
+                    deltaTimeText,
+                    offsetPosition: -Config.ShadowHeight,
+                    offsetDepth: Config.ShadowDepthOffset,
+                    color: Config.ShadowColor);
+                Console.WriteLine("Done");
+            }
 
             if (!Config.IncludeSound)
                 continue;

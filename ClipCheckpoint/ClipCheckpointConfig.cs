@@ -26,8 +26,11 @@ public class ClipCheckpointConfig
     [YamlMember(Description = "Color of the main checkpoint time text.")]
     public Vec3 Color { get; set; } = (1, 1, 1);
 
+    [YamlMember(Description = "Color of the delta - checkpoint time text.")]
+    public Vec3 DeltaNegativeColor { get; set; } = (0, 0, 1);
+
     [YamlMember(Description = "Color of the delta checkpoint time text.")]
-    public Vec3 DeltaColor { get; set; } = (0, 0, 1);
+    public Vec3 DeltaPositiveColor { get; set; } = (1, 0, 0);
 
     [YamlMember(Description = "Color of the shadow of the main checkpoint time text.")]
     public Vec3 ShadowColor { get; set; } = (0, 0, 0);
