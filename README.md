@@ -11,7 +11,7 @@ The tool currently works on drag and dropping. You can also drag and drop multip
 
 A web interface is planned in the future.
 
-Currently the tool can read inputs from these files:
+Currently the tool can read checkpoints from these files:
 - Replay.Gbx
 - Ghost.Gbx
 - Clip.Gbx (that contains minimally 1 ghost)
