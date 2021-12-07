@@ -80,7 +80,7 @@ class Program
         Console.ReadKey(intercept: true);
     }
 
-    static void ProcessFile(string fileName, string suffix, string outputFolder)
+    static void ProcessFile(string fileName, string suffix, string outputFolder, string deltaFileName = "null")
     {
         if (!File.Exists(fileName))
         {
@@ -88,8 +88,18 @@ class Program
             return;
         }
 
+        if (deltaFlag)
+        {
+            if (!File.Exists(deltaFileName))
+            {
+                Console.WriteLine("{0} does not exist.", deltaFileName);
+                return;
+            }
+        }
+
         Console.Write("Reading the GBX file... ");
         var node = GameBox.ParseNode(fileName);
+        GBX.NET.Engines.MwFoundations.CMwNod? deltaNode = null;
 
         if (node is null)
         {
@@ -99,8 +109,19 @@ class Program
 
         Console.WriteLine("Done");
 
+        if (deltaFlag)
+        {
+            System.Console.WriteLine("Reading the chosen delta GBX file...");
+            deltaNode = GameBox.ParseNode(deltaFileName);
+            if (deltaNode is null)
+            {
+                System.Console.WriteLine("GBX is not readable by the program.");
+                return;
+            }
+        }
+
         var config = GetOrCreateConfig();
-        var io = new ClipCheckpointIO(node, config);
+        var io = new ClipCheckpointIO(node, config, deltaNode: deltaNode, deltaFlag: deltaFlag);
 
         CGameCtnMediaClip result;
 

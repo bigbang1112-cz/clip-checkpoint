@@ -164,6 +164,7 @@ public class ClipCheckpointIO
                 System.Console.WriteLine("The interval is: {0}", interval);
                 deltaTimeStr = interval.ToTmString(useHundredths: !isFromTM2);
                 deltaTimeText = string.Format(Config.TextCheckpointFormat, deltaTimeStr);
+                deltaTimeText = timeText + "| D: " + deltaTimeText;
             }
 
             if (Map?.Mode == CGameCtnChallenge.PlayMode.Stunts)
@@ -181,8 +182,8 @@ public class ClipCheckpointIO
             {
                 Console.Write("-> Creating checkpoint delta text media block ({0})... ", deltaTimeStr);
                 textMediaBlocks[i] = CreateCheckpointTextMediaBlock(time,
-                    timeText,
-                    color: Config.Color);
+                    deltaTimeText,
+                    color: Config.DeltaColor);
                 Console.WriteLine("Done");
             }
 
