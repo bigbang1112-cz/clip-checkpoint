@@ -15,7 +15,7 @@ Color: [1, 1, 1]
 # Color of the delta - checkpoint time text.
 DeltaNegativeColor: [0, 0, 1]
 # Color of the delta + checkpoint time text.
-DeltaNegativeColor: [1, 0, 0]
+DeltaPositiveColor: [1, 0, 0]
 # Color of the shadow of the main checkpoint time text.
 ShadowColor: [0, 0, 0]
 # Height (distance) of the shadow of the main checkpoint time text.
