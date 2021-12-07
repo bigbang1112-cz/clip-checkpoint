@@ -32,8 +32,4 @@
 	  </None>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\gbxdotnet\Src\GBX.NET\GBX.NET.csproj" />
-	</ItemGroup>
-
 </Project>
