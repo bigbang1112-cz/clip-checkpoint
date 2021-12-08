@@ -98,8 +98,8 @@ public class ClipCheckpointConfig
     [YamlMember(Description = "Format of the lap time text. {0} is the lap time (X:XX.XXX or X:XX.XX)")]
     public string TextLapFormat { get; set; } = "$o$n$s{0}";
 
-    [YamlMember(Description = "Format of the delta time text. {0} is + or -, {1} is the delta time ((+)X:XX.XXX or (+)X:XX.XX)")]
-    public string TextDeltaFormat { get; set; } = "$o$n$s{0}{1}";
+    [YamlMember(Description = "Format of the delta time text. {0} is the delta time ((+)X:XX.XXX or (+)X:XX.XX)")]
+    public string TextDeltaFormat { get; set; } = "$o$n$s{0}";
 
     [YamlMember(Description = "Format of the stunts score addition to the main checkpoint time text. {0} is the stunts score.")]
     public string TextStuntsFormat { get; set; } = "({0} pts.)";

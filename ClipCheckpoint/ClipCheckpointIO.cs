@@ -236,7 +236,8 @@ public class ClipCheckpointIO
         var deltaTimeStr = interval.ToTmString(useHundredths: !isFromTM2);
         var isPositiveDelta = interval > TimeSpan.Zero;
 
-        var deltaTimeText = string.Format(Config.TextDeltaFormat, isPositiveDelta ? "+" : "", deltaTimeStr);
+        var deltaTimeTextWithoutFormat = (isPositiveDelta ? "+" : "") + deltaTimeStr;
+        var deltaTimeText = string.Format(Config.TextDeltaFormat, deltaTimeTextWithoutFormat);
 
         var deltaColor = interval.Ticks switch
         {
@@ -245,7 +246,7 @@ public class ClipCheckpointIO
             _ => Config.DeltaEqualColor
         };
 
-        Console.Write("-> Creating checkpoint delta text media block ({0})... ", deltaTimeStr);
+        Console.Write("-> Creating checkpoint delta text media block ({0})... ", deltaTimeTextWithoutFormat);
         var mediaBlock = CreateCheckpointTextMediaBlock(time,
             deltaTimeText,
             offsetPosition: Config.DeltaTimePositionOffset,

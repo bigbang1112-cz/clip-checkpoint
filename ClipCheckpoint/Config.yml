@@ -60,8 +60,8 @@ TrackNameCheckpointDelta: CP DELTA
 TextCheckpointFormat: $o$n{0}
 # Format of the lap time text. {0} is the lap time (X:XX.XXX or X:XX.XX)
 TextLapFormat: $o$n$s{0}
-# Format of the delta time text. {0} is + or -, {1} is the delta time ((+)X:XX.XXX or (+)X:XX.XX)
-TextDeltaFormat: $o$n$s{0}{1}
+# Format of the delta time text. {0} is the delta time ((+)X:XX.XXX or (+)X:XX.XX)
+TextDeltaFormat: $o$n$s{0}
 # Format of the stunts score addition to the main checkpoint time text. {0} is the stunts score.
 TextStuntsFormat: ({0} pts.)
 # URL location of the regular checkpoint sound (must be ogg).
