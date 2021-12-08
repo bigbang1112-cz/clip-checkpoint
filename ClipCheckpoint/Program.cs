@@ -2,6 +2,7 @@
 using BigBang1112.ClipCheckpoint.Exceptions;
 using GBX.NET;
 using GBX.NET.Engines.Game;
+using GBX.NET.Engines.MwFoundations;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,79 +14,98 @@ namespace BigBang1112.ClipCheckpoint;
 class Program
 {
     static readonly string rootPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "/";
-    static bool deltaFlag = false; // Added a flag for delta comparison
+    static readonly string suffix = "-CPs";
+    static readonly string outputFolder = Path.Combine(rootPath, "Output");
 
     static void Main(string[] args)
     {
         if (args.Length == 0)
         {
-                Console.Write("Please drag and drop GBX files onto the executable. Press any key to continue...");
-                Console.ReadKey(intercept: true);
-                return;
+            Console.Write("Please drag and drop GBX files onto the executable. Press any key to continue...");
+            Console.ReadKey(intercept: true);
+            return;
         }
-        else if (args.Length > 1) // If there are more than 1 replays we ask if we would like to compare deltas.
-        {
-            System.Console.WriteLine("Detected 2 or more replays.");
-            System.Console.WriteLine("Would you like to compare deltas? (Y/N)");
-            switch (Console.ReadLine())
-            {
-                case "Y":
-                case "y":
-                    deltaFlag = true;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        var suffix = "-CPs";
-        var outputFolder = Path.Combine(rootPath, "Output");
 
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
+        var deltaFlag = false;
+        
+        if (args.Length > 1) // If there is more than 1 replay we ask if we would like to compare deltas.
+        {
+            Console.WriteLine("Detected 2 or more replays.");
+            Console.WriteLine("Would you like to compare deltas? (Y/N)");
+
+            deltaFlag = Console.ReadLine()?.ToLower() == "y";
+        }
+
         if (deltaFlag) // Delta comparison
         {
-            suffix = "-Deltas";
-            // Ask the user which replay will be compared to
-            System.Console.WriteLine("Fetched replays:");
-            // Loop and show user's input file names with index values.
-            for (int i = 0; i < args.Length; i++)
-            {
-                System.Console.WriteLine("{0}| {1}", i, args[i]);
-            }
-            System.Console.WriteLine("Please enter the number of the replay to compare to");
-            // Loop till we get a real number that fits (is an int and is in range)
-            int.TryParse(Console.ReadLine(), out int deltaIndex); // Stores the index of the delta replay in string[] args
-            while (deltaIndex == -1 || deltaIndex > args.Length - 1)
-            {
-                System.Console.WriteLine("Didn't recieve a valid number! try again.");
-                int.TryParse(Console.ReadLine(), out deltaIndex);
-            }
-            // Now that we have a replay to compare to, we can run all files (except the chosen delta) compared to the delta.
-            for (int j = 0; j < args.Length; j++)
-            {
-                if (j == deltaIndex)
-                {
-                    continue;
-                }
-                ProcessFile(args[j], suffix, outputFolder, deltaFileName: args[deltaIndex]);
-            }
+            ProcessDeltaMode(args);
         }
         else // No delta comparison
         {
-            foreach (var fileName in args)
-            {
-                ProcessFile(fileName, suffix, outputFolder);
-            }
+            ProcessNormalMode(args);
         }
-        
 
         Console.WriteLine();
         Console.Write("Finished! Press any key to continue... ");
         Console.ReadKey(intercept: true);
     }
 
-    static void ProcessFile(string fileName, string suffix, string outputFolder, string deltaFileName = "null")
+    private static void ProcessNormalMode(string[] args)
+    {
+        foreach (var fileName in args)
+        {
+            ProcessFile(fileName);
+        }
+    }
+
+    private static void ProcessDeltaMode(string[] args)
+    {
+        // Ask the user which replay will be compared to
+        Console.WriteLine("Fetched replays:");
+
+        // Loop and show user's input file names with index values.
+        for (var i = 0; i < args.Length; i++)
+        {
+            Console.WriteLine("{0}| {1}", i, args[i]);
+        }
+
+        Console.WriteLine();
+
+        Console.WriteLine("Please enter the number of the focused replay:");
+        
+        var mainIndex = GetIndex(args);
+
+        Console.WriteLine("Please enter the number of the replay used to substract checkpoint times:");
+
+        // Index of the delta replay in string[] args
+        var deltaIndex = GetIndex(args);
+
+        // Now that we have a replay to compare to, we can run all files (except the chosen delta) compared to the delta.
+        ProcessFile(fileName: args[mainIndex], deltaFileName: args[deltaIndex]);
+    }
+
+    private static int GetIndex(string[] args)
+    {
+        // Index of the delta replay in string[] args
+        int index;
+
+        // Loop till we get a real number that fits (is an int and is in range)
+        while (!int.TryParse(Console.ReadLine(), out index) || !IsInRange(args, index))
+        {
+            Console.WriteLine("Didn't recieve a valid number! try again.");
+        }
+
+        return index;
+    }
+
+    private static bool IsInRange(string[] array, int index)
+    {
+        return index >= 0 && index < array.Length;
+    }
+
+    static void ProcessFile(string fileName, string? deltaFileName = null)
     {
         if (!File.Exists(fileName))
         {
@@ -93,18 +113,17 @@ class Program
             return;
         }
 
-        if (deltaFlag)
+        var deltaExists = File.Exists(deltaFileName);
+
+        if (!deltaExists)
         {
-            if (!File.Exists(deltaFileName))
-            {
-                Console.WriteLine("{0} does not exist.", deltaFileName);
-                return;
-            }
+            Console.WriteLine("{0} does not exist.", deltaFileName);
+            return;
         }
 
         Console.Write("Reading the GBX file... ");
+
         var node = GameBox.ParseNode(fileName);
-        GBX.NET.Engines.MwFoundations.CMwNod? deltaNode = null;
 
         if (node is null)
         {
@@ -114,19 +133,23 @@ class Program
 
         Console.WriteLine("Done");
 
-        if (deltaFlag)
+        var deltaNode = default(CMwNod?);
+
+        if (deltaExists)
         {
-            System.Console.WriteLine("Reading the chosen delta GBX file...");
-            deltaNode = GameBox.ParseNode(deltaFileName);
+            Console.WriteLine("Reading the chosen delta GBX file...");
+
+            deltaNode = GameBox.ParseNode(deltaFileName!);
+
             if (deltaNode is null)
             {
-                System.Console.WriteLine("GBX is not readable by the program.");
+                Console.WriteLine("GBX is not readable by the program.");
                 return;
             }
         }
 
         var config = GetOrCreateConfig();
-        var io = new ClipCheckpointIO(node, config, deltaNode: deltaNode, deltaFlag: deltaFlag);
+        var io = new ClipCheckpointIO(node, config, deltaNode: deltaNode);
 
         CGameCtnMediaClip result;
 
