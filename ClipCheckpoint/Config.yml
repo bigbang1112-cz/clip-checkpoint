@@ -12,10 +12,6 @@ Length: 2
 Volume: 1
 # Color of the main checkpoint time text.
 Color: [1, 1, 1]
-# Color of the delta - checkpoint time text.
-DeltaNegativeColor: [0, 0, 1]
-# Color of the delta + checkpoint time text.
-DeltaPositiveColor: [1, 0, 0]
 # Color of the shadow of the main checkpoint time text.
 ShadowColor: [0, 0, 0]
 # Height (distance) of the shadow of the main checkpoint time text.
@@ -28,6 +24,16 @@ LapTimePositionOffset: [0, 0.1]
 LapTimeScale: [0.75, 0.75]
 # Color of the main checkpoint time.
 LapTimeColor: [1, 1, 0]
+# Position offset of the delta time text (added on Position).
+DeltaTimePositionOffset: [0.1, -0.1]
+# Scale of the delta time text (multiplied on Scale).
+DeltaTimeScale: [0.75, 0.75]
+# Color of the delta minus checkpoint time text.
+DeltaNegativeColor: [0, 0, 1]
+# Color of the delta equal checkpoint time text.
+DeltaEqualColor: [1, 0, 1]
+# Color of the delta plus checkpoint time text.
+DeltaPositiveColor: [1, 0, 0]
 # Length of the start of the animation.
 AnimationInLength: 0.1
 # Length of the end of the animation.
@@ -48,10 +54,14 @@ TrackNameCheckpointTimeShadow: CP TIME SH
 TrackNameCheckpointSound: CP SOUND
 # Name of the checkpoint lap text track.
 TrackNameCheckpointLap: CP LAP
+# Name of the checkpoint delta text track.
+TrackNameCheckpointDelta: CP DELTA
 # Format of the main checkpoint time text. {0} is the time (X:XX.XXX or X:XX.XX)
 TextCheckpointFormat: $o$n{0}
 # Format of the lap time text. {0} is the lap time (X:XX.XXX or X:XX.XX)
 TextLapFormat: $o$n$s{0}
+# Format of the delta time text. {0} is + or -, {1} is the delta time ((+)X:XX.XXX or (+)X:XX.XX)
+TextDeltaFormat: $o$n$s{0}{1}
 # Format of the stunts score addition to the main checkpoint time text. {0} is the stunts score.
 TextStuntsFormat: ({0} pts.)
 # URL location of the regular checkpoint sound (must be ogg).
