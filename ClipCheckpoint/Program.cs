@@ -28,23 +28,36 @@ class Program
 
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
+        var fileNames = args.Where(FileExists).ToArray();
+
+        if (fileNames.Length == 0)
+        {
+            Console.Write("No valid file names found. Press any key to continue... ");
+            Console.ReadKey(intercept: true);
+        }
+
         var deltaFlag = false;
-        
+
+        Console.WriteLine();
+
         if (args.Length > 1) // If there is more than 1 replay we ask if we would like to compare deltas.
         {
             Console.WriteLine("Detected 2 or more replays.");
+            Console.WriteLine();
             Console.WriteLine("Would you like to compare deltas? (Y/N)");
 
             deltaFlag = Console.ReadLine()?.ToLower() == "y";
         }
 
+        Console.WriteLine();
+
         if (deltaFlag) // Delta comparison
         {
-            ProcessDeltaMode(args);
+            ProcessDeltaMode(fileNames);
         }
         else // No delta comparison
         {
-            ProcessNormalMode(args);
+            ProcessNormalMode(fileNames);
         }
 
         Console.WriteLine();
@@ -52,38 +65,52 @@ class Program
         Console.ReadKey(intercept: true);
     }
 
-    private static void ProcessNormalMode(string[] args)
+    private static bool FileExists(string fileName)
     {
-        foreach (var fileName in args)
+        if (File.Exists(fileName))
+        {
+            Console.WriteLine("File {0} found.", fileName);
+            return true;
+        }
+
+        Console.WriteLine("File {0} not found.", fileName);
+        return false;
+    }
+
+    private static void ProcessNormalMode(string[] fileNames)
+    {
+        foreach (var fileName in fileNames)
         {
             ProcessFile(fileName);
         }
     }
 
-    private static void ProcessDeltaMode(string[] args)
+    private static void ProcessDeltaMode(string[] fileNames)
     {
         // Ask the user which replay will be compared to
         Console.WriteLine("Fetched replays:");
 
         // Loop and show user's input file names with index values.
-        for (var i = 0; i < args.Length; i++)
+        for (var i = 0; i < fileNames.Length; i++)
         {
-            Console.WriteLine("{0}| {1}", i, args[i]);
+            Console.WriteLine("[{0}] {1}", i, fileNames[i]);
         }
 
         Console.WriteLine();
 
-        Console.WriteLine("Please enter the number of the focused replay:");
-        
-        var mainIndex = GetIndex(args);
+        Console.Write("Please enter the number of the focused replay: ");
 
-        Console.WriteLine("Please enter the number of the replay used to substract checkpoint times:");
+        var mainIndex = GetIndex(fileNames);
+
+        Console.Write("Please enter the number of the replay used to substract checkpoint times: ");
 
         // Index of the delta replay in string[] args
-        var deltaIndex = GetIndex(args);
+        var deltaIndex = GetIndex(fileNames);
+
+        Console.WriteLine();
 
         // Now that we have a replay to compare to, we can run all files (except the chosen delta) compared to the delta.
-        ProcessFile(fileName: args[mainIndex], deltaFileName: args[deltaIndex]);
+        ProcessFile(fileName: fileNames[mainIndex], deltaFileName: fileNames[deltaIndex]);
     }
 
     private static int GetIndex(string[] args)
@@ -94,7 +121,7 @@ class Program
         // Loop till we get a real number that fits (is an int and is in range)
         while (!int.TryParse(Console.ReadLine(), out index) || !IsInRange(args, index))
         {
-            Console.WriteLine("Didn't recieve a valid number! try again.");
+            Console.Write("Didn't recieve a valid number! try again. ");
         }
 
         return index;
@@ -107,19 +134,7 @@ class Program
 
     static void ProcessFile(string fileName, string? deltaFileName = null)
     {
-        if (!File.Exists(fileName))
-        {
-            Console.WriteLine("{0} does not exist.", fileName);
-            return;
-        }
-
-        var deltaExists = File.Exists(deltaFileName);
-
-        if (!deltaExists)
-        {
-            Console.WriteLine("{0} does not exist.", deltaFileName);
-            return;
-        }
+        var deltaExists = deltaFileName is not null;
 
         Console.Write("Reading the GBX file... ");
 
