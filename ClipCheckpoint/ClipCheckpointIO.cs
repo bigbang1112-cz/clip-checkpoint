@@ -100,7 +100,7 @@ public class ClipCheckpointIO
         var textMediaBlocks = new CGameCtnMediaBlockText[checkpointCount];
         var textShadowMediaBlocks = new CGameCtnMediaBlockText[checkpointCount]; // TODO: layering
         var textMultilapMediaBlocks = new CGameCtnMediaBlockText[checkpoints.Length - checkpointCountPerLap];
-        var textDeltaMediaBlocks = new CGameCtnMediaBlockText[checkpoints.Length];
+        var textDeltaMediaBlocks = new CGameCtnMediaBlockText[DeltaInput is null ? 0 : checkpoints.Length];
         var soundMediaBlocks = new CGameCtnMediaBlockSound[Config.IncludeSound ? checkpointCount : 0];
 
         for (var i = 0; i < checkpoints.Length; i++)

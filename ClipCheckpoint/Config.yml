@@ -25,7 +25,7 @@ LapTimeScale: [0.75, 0.75]
 # Color of the main checkpoint time.
 LapTimeColor: [1, 1, 0]
 # Position offset of the delta time text (added on Position).
-DeltaTimePositionOffset: [0.1, -0.1]
+DeltaTimePositionOffset: [0, -0.1]
 # Scale of the delta time text (multiplied on Scale).
 DeltaTimeScale: [0.75, 0.75]
 # Color of the delta minus checkpoint time text.

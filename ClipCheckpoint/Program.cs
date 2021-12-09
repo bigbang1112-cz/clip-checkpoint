@@ -50,6 +50,9 @@ Console.WriteLine();
 
 if (deltaFlag) // Delta comparison
 {
+    // Set a new suffix for the output file
+    suffix = "-Deltas";
+
     ProcessDeltaMode();
 }
 else // No delta comparison
