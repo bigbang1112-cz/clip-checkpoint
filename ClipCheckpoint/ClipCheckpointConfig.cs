@@ -44,6 +44,21 @@ public class ClipCheckpointConfig
     [YamlMember(Description = "Color of the main checkpoint time.")]
     public Vec3 LapTimeColor { get; set; } = (1, 1, 0);
 
+    [YamlMember(Description = "Position offset of the delta time text (added on Position).")]
+    public Vec2 DeltaTimePositionOffset { get; set; } = (0, -0.1f);
+
+    [YamlMember(Description = "Scale of the delta time text (multiplied on Scale).")]
+    public Vec2 DeltaTimeScale { get; set; } = (0.75f, 0.75f);
+
+    [YamlMember(Description = "Color of the delta minus checkpoint time text.")]
+    public Vec3 DeltaNegativeColor { get; set; } = (0, 0, 1);
+
+    [YamlMember(Description = "Color of the delta equal checkpoint time text.")]
+    public Vec3 DeltaEqualColor { get; set; } = (1, 0, 1);
+
+    [YamlMember(Description = "Color of the delta plus checkpoint time text.")]
+    public Vec3 DeltaPositiveColor { get; set; } = (1, 0, 0);
+
     [YamlMember(Description = "Length of the start of the animation.")]
     public TimeSpan AnimationInLength { get; set; } = TimeSpan.FromSeconds(0.1);
 
@@ -74,12 +89,18 @@ public class ClipCheckpointConfig
     [YamlMember(Description = "Name of the checkpoint lap text track.")]
     public string TrackNameCheckpointLap { get; set; } = "CP LAP";
 
+    [YamlMember(Description = "Name of the checkpoint delta text track.")]
+    public string TrackNameCheckpointDelta { get; set; } = "CP DELTA";
+
     [YamlMember(Description = "Format of the main checkpoint time text. {0} is the time (X:XX.XXX or X:XX.XX)")]
     public string TextCheckpointFormat { get; set; } = "$o$n{0}";
     
     [YamlMember(Description = "Format of the lap time text. {0} is the lap time (X:XX.XXX or X:XX.XX)")]
     public string TextLapFormat { get; set; } = "$o$n$s{0}";
-    
+
+    [YamlMember(Description = "Format of the delta time text. {0} is the delta time ((+)X:XX.XXX or (+)X:XX.XX)")]
+    public string TextDeltaFormat { get; set; } = "$o$n$s{0}";
+
     [YamlMember(Description = "Format of the stunts score addition to the main checkpoint time text. {0} is the stunts score.")]
     public string TextStuntsFormat { get; set; } = "({0} pts.)";
 

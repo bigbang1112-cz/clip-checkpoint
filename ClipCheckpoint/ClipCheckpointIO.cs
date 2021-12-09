@@ -12,10 +12,11 @@ namespace BigBang1112.ClipCheckpoint;
 public class ClipCheckpointIO
 {
     public CGameCtnGhost Input { get; }
+    public CGameCtnGhost? DeltaInput { get; }
     public CGameCtnChallenge? Map { get; }
     public ClipCheckpointConfig Config { get; }
 
-    public ClipCheckpointIO(CMwNod node, ClipCheckpointConfig? config = null)
+    public ClipCheckpointIO(CMwNod node, ClipCheckpointConfig? config = null, CMwNod? deltaNode = null)
     {
         Input = node switch
         {
@@ -33,6 +34,24 @@ public class ClipCheckpointIO
         }
 
         Config = config ?? new ClipCheckpointConfig();
+
+        if (deltaNode is not null)
+        {
+            DeltaInput = deltaNode switch
+            {
+                CGameCtnReplayRecord deltaReplay => GetGhostFromReplay(deltaReplay),
+                CGameCtnGhost deltaGhost => deltaGhost,
+                CGameCtnMediaClip deltaClip => GetFirstGhostFromClip(deltaClip),
+                _ => null,
+            };
+
+            if (DeltaInput is null)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Input used to calculate delta has no ghost inside. Clip will be generated without comparison.");
+                Console.ResetColor();
+            }
+        }
     }
 
     public CGameCtnMediaClip Execute()
@@ -65,6 +84,10 @@ public class ClipCheckpointIO
         if (checkpoints is null || checkpoints.Length == 0)
             throw new NoCheckpointsException();
 
+        var otherGhostCpTimes = DeltaInput?.Checkpoints?
+            .Select(x => x.Time ?? throw new CheckpointIsMinusOneException())
+            .ToArray();
+
         Console.WriteLine("Checkpoints extracted.");
 
         // 'Real' CP count depending if also shown on finish line or not
@@ -77,6 +100,7 @@ public class ClipCheckpointIO
         var textMediaBlocks = new CGameCtnMediaBlockText[checkpointCount];
         var textShadowMediaBlocks = new CGameCtnMediaBlockText[checkpointCount]; // TODO: layering
         var textMultilapMediaBlocks = new CGameCtnMediaBlockText[checkpoints.Length - checkpointCountPerLap];
+        var textDeltaMediaBlocks = new CGameCtnMediaBlockText[DeltaInput is null ? 0 : checkpoints.Length];
         var soundMediaBlocks = new CGameCtnMediaBlockSound[Config.IncludeSound ? checkpointCount : 0];
 
         for (var i = 0; i < checkpoints.Length; i++)
@@ -87,8 +111,13 @@ public class ClipCheckpointIO
 
             if (!cp.Time.TryValue(out TimeSpan time))
             {
-                Console.WriteLine("-> -1 time??? Skipping.");
-                continue;
+                if (DeltaInput is null)
+                {
+                    Console.WriteLine("-> -1 time??? Skipping.");
+                    continue;
+                }
+
+                throw new CheckpointIsMinusOneException();
             }
 
             // Lap MT blocks - if lap race - and an unique lap time was reached
@@ -105,6 +134,16 @@ public class ClipCheckpointIO
                     checkpointCountPerLap,
                     isFromTM2);
                 Console.WriteLine("Done");
+            }
+
+            if (DeltaInput is not null)
+            {
+                var otherGhostTime = otherGhostCpTimes![i];
+
+                // Calculate interval 
+                var interval = cp.Time.GetValueOrDefault() - otherGhostTime;
+
+                textDeltaMediaBlocks[i] = CreateDeltaMediaBlock(time, isFromTM2, interval);
             }
 
             // If the REAL checkpoint count was reached, ignore the rest of the checkpoints array
@@ -152,7 +191,7 @@ public class ClipCheckpointIO
         }
 
         Console.Write("Cleaning up overlapping... ");
-        ClearOverlappingOnText(textMediaBlocks, textShadowMediaBlocks, textMultilapMediaBlocks);
+        ClearOverlappingOnText(textMediaBlocks, textShadowMediaBlocks, textMultilapMediaBlocks, textDeltaMediaBlocks);
         ClearOverlappingOnSound(soundMediaBlocks);
         Console.WriteLine("Done");
 
@@ -163,6 +202,13 @@ public class ClipCheckpointIO
             CreateMediaTrack(textShadowMediaBlocks, name: Config.TrackNameCheckpointTimeShadow)
         };
         Console.WriteLine("Done");
+
+        if (DeltaInput is not null)
+        {
+            Console.Write("Creating media track for the delta text media blocks... ");
+            trackList.Add(CreateMediaTrack(textDeltaMediaBlocks, name: Config.TrackNameCheckpointDelta));
+            Console.WriteLine("Done");
+        }
 
         if (Config.IncludeSound)
         {
@@ -183,6 +229,32 @@ public class ClipCheckpointIO
         Console.WriteLine("Done");
 
         return clip;
+    }
+
+    private CGameCtnMediaBlockText CreateDeltaMediaBlock(TimeSpan time, bool isFromTM2, TimeSpan interval)
+    {
+        var deltaTimeStr = interval.ToTmString(useHundredths: !isFromTM2);
+        var isPositiveDelta = interval > TimeSpan.Zero;
+
+        var deltaTimeTextWithoutFormat = (isPositiveDelta ? "+" : "") + deltaTimeStr;
+        var deltaTimeText = string.Format(Config.TextDeltaFormat, deltaTimeTextWithoutFormat);
+
+        var deltaColor = interval.Ticks switch
+        {
+            > 0 => Config.DeltaPositiveColor,
+            < 0 => Config.DeltaNegativeColor,
+            _ => Config.DeltaEqualColor
+        };
+
+        Console.Write("-> Creating checkpoint delta text media block ({0})... ", deltaTimeTextWithoutFormat);
+        var mediaBlock = CreateCheckpointTextMediaBlock(time,
+            deltaTimeText,
+            offsetPosition: Config.DeltaTimePositionOffset,
+            color: deltaColor,
+            scale: Config.DeltaTimeScale);
+        Console.WriteLine("Done");
+
+        return mediaBlock;
     }
 
     private static CGameCtnGhost GetGhostFromReplay(CGameCtnReplayRecord replay)
