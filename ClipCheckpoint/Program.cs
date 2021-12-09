@@ -166,8 +166,6 @@ bool IsInRange<T>(T[] array, int index)
 
 void Process(CMwNod mainNode, CMwNod? deltaNode = null)
 {
-    var deltaExists = deltaNode is not null;
-
     var config = GetOrCreateConfig();
     var io = new ClipCheckpointIO(mainNode, config, deltaNode);
 
