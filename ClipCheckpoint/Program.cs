@@ -1,220 +1,264 @@
-﻿using BigBang1112.ClipCheckpoint.Converters;
+﻿using BigBang1112.ClipCheckpoint;
+using BigBang1112.ClipCheckpoint.Converters;
 using BigBang1112.ClipCheckpoint.Exceptions;
 using GBX.NET;
 using GBX.NET.Engines.Game;
-using System;
-using System.Collections.Generic;
+using GBX.NET.Engines.MwFoundations;
 using System.Globalization;
-using System.IO;
 using YamlDotNet.Serialization;
 
-namespace BigBang1112.ClipCheckpoint;
-
-class Program
+if (args.Length == 0)
 {
-    static readonly string rootPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "/";
-    static bool deltaFlag = false; // Added a flag for delta comparison
+    Console.Write("Please drag and drop GBX files onto the executable. Press any key to continue...");
+    Console.ReadKey(intercept: true);
+    return;
+}
 
-    static void Main(string[] args)
+var rootPath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + "/";
+var suffix = "-CPs";
+var outputFolder = Path.Combine(rootPath, "Output");
+
+CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+
+var nodes = args.Where(FileExists)
+    .Select(NodeFromFileName)
+    .Where(x => x is not null)
+    .ToArray();
+
+if (nodes.Length == 0)
+{
+    Console.WriteLine();
+    Console.Write("No valid files found. Press any key to continue... ");
+    Console.ReadKey(intercept: true);
+    return;
+}
+
+Console.WriteLine();
+
+var deltaFlag = false;
+
+if (args.Length > 1) // If there is more than 1 replay we ask if we would like to compare deltas.
+{
+    Console.WriteLine("Detected 2 or more files.");
+    Console.WriteLine();
+    Console.WriteLine("Would you like to compare deltas? (Y/N)");
+
+    deltaFlag = Console.ReadLine()?.ToLower() == "y";
+}
+
+Console.WriteLine();
+
+if (deltaFlag) // Delta comparison
+{
+    ProcessDeltaMode();
+}
+else // No delta comparison
+{
+    ProcessNormalMode();
+}
+
+Console.WriteLine();
+Console.Write("Finished! Press any key to continue... ");
+Console.ReadKey(intercept: true);
+
+#region Methods
+
+bool FileExists(string fileName)
+{
+    if (File.Exists(fileName))
     {
-        if (args.Length == 0)
-        {
-                Console.Write("Please drag and drop GBX files onto the executable. Press any key to continue...");
-                Console.ReadKey(intercept: true);
-                return;
-        }
-        else if (args.Length > 1) // If there are more than 1 replays we ask if we would like to compare deltas.
-        {
-            System.Console.WriteLine("Detected 2 or more replays.");
-            System.Console.WriteLine("Would you like to compare deltas? (Y/N)");
-            switch (Console.ReadLine())
-            {
-                case "Y":
-                case "y":
-                    deltaFlag = true;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        var suffix = "-CPs";
-        var outputFolder = Path.Combine(rootPath, "Output");
-
-        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-
-        if (deltaFlag) // Delta comparison
-        {
-            suffix = "-Deltas";
-            // Ask the user which replay will be compared to
-            System.Console.WriteLine("Fetched replays:");
-            // Loop and show user's input file names with index values.
-            for (int i = 0; i < args.Length; i++)
-            {
-                System.Console.WriteLine("{0}| {1}", i, args[i]);
-            }
-            System.Console.WriteLine("Please enter the number of the replay to compare to");
-            // Loop till we get a real number that fits (is an int and is in range)
-            int.TryParse(Console.ReadLine(), out int deltaIndex); // Stores the index of the delta replay in string[] args
-            while (deltaIndex == -1 || deltaIndex > args.Length - 1)
-            {
-                System.Console.WriteLine("Didn't recieve a valid number! try again.");
-                int.TryParse(Console.ReadLine(), out deltaIndex);
-            }
-            // Now that we have a replay to compare to, we can run all files (except the chosen delta) compared to the delta.
-            for (int j = 0; j < args.Length; j++)
-            {
-                if (j == deltaIndex)
-                {
-                    continue;
-                }
-                ProcessFile(args[j], suffix, outputFolder, deltaFileName: args[deltaIndex]);
-            }
-        }
-        else // No delta comparison
-        {
-            foreach (var fileName in args)
-            {
-                ProcessFile(fileName, suffix, outputFolder);
-            }
-        }
-        
-
-        Console.WriteLine();
-        Console.Write("Finished! Press any key to continue... ");
-        Console.ReadKey(intercept: true);
+        Console.Write("File \"{0}\" found... ", Path.GetFileName(fileName));
+        return true;
     }
 
-    static void ProcessFile(string fileName, string suffix, string outputFolder, string deltaFileName = "null")
+    Console.WriteLine("File \"{0}\" not found... ", Path.GetFileName(fileName));
+    return false;
+}
+
+CMwNod NodeFromFileName(string fileName)
+{
+    try
     {
-        if (!File.Exists(fileName))
-        {
-            Console.WriteLine("{0} does not exist.", fileName);
-            return;
-        }
-
-        if (deltaFlag)
-        {
-            if (!File.Exists(deltaFileName))
-            {
-                Console.WriteLine("{0} does not exist.", deltaFileName);
-                return;
-            }
-        }
-
-        Console.Write("Reading the GBX file... ");
         var node = GameBox.ParseNode(fileName);
-        GBX.NET.Engines.MwFoundations.CMwNod? deltaNode = null;
 
         if (node is null)
         {
-            Console.WriteLine("GBX is not readable by the program.");
-            return;
+            Console.WriteLine("Fail.");
         }
-
-        Console.WriteLine("Done");
-
-        if (deltaFlag)
+        else
         {
-            System.Console.WriteLine("Reading the chosen delta GBX file...");
-            deltaNode = GameBox.ParseNode(deltaFileName);
-            if (deltaNode is null)
-            {
-                System.Console.WriteLine("GBX is not readable by the program.");
-                return;
-            }
+            Console.WriteLine("Success.");
         }
 
-        var config = GetOrCreateConfig();
-        var io = new ClipCheckpointIO(node, config, deltaNode: deltaNode, deltaFlag: deltaFlag);
+        return node!;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
 
-        CGameCtnMediaClip result;
+        return null!;
+    }
+}
 
-        try
-        {
-            result = io.Execute();
-        }
-        catch (NoGhostException ex)
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(ex.Message);
-            Console.ResetColor();
-            return;
-        }
-        catch (NoCheckpointsException ex)
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(ex.Message);
-            Console.ResetColor();
-            return;
-        }
-        catch (Exception ex)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(ex);
-            Console.ResetColor();
-            return;
-        }
+void ProcessNormalMode()
+{
+    foreach (var node in nodes)
+    {
+        Process(node);
+    }
+}
 
-        var newFileName = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(fileName)) + suffix + ".Clip.Gbx";
+void ProcessDeltaMode()
+{
+    // Ask the user which replay will be compared to
+    Console.WriteLine("Fetched replays:");
 
-        if (!string.IsNullOrWhiteSpace(outputFolder))
-            newFileName = Path.Combine(outputFolder, newFileName);
-
-        Directory.CreateDirectory(outputFolder);
-
-        result.Save(newFileName, remap: config.Legacy ? IDRemap.TrackMania2006 : IDRemap.Latest);
+    // Loop and show user's input file names with index values.
+    for (var i = 0; i < nodes.Length; i++)
+    {
+        Console.WriteLine("[{0}] {1}", i, Path.GetFileName(nodes[i]!.GBX!.FileName));
     }
 
-    private static ClipCheckpointConfig GetOrCreateConfig()
+    Console.WriteLine();
+
+    Console.Write("Please enter the number of the focused replay: ");
+
+    var mainIndex = GetIndex();
+
+    Console.Write("Please enter the number of the replay used to substract checkpoint times: ");
+
+    // Index of the delta replay in string[] args
+    int deltaIndex;
+
+    do
     {
-        var configYml = Path.Combine(rootPath, "Config.yml");
+        deltaIndex = GetIndex();
 
-        if (File.Exists(configYml))
-        {
-            using var r = File.OpenText(configYml);
-            var deserializer = new DeserializerBuilder()
-                .WithTypeConverter(new TimeSpanConverter())
-                .WithTypeConverter(new Vec2Converter())
-                .WithTypeConverter(new Vec3Converter())
-                .Build();
+        if (deltaIndex == mainIndex)
+            Console.Write("Cannot be the same as the focused replay... ");
+    }
+    while (deltaIndex == mainIndex);
 
-            try
-            {
-                var config = deserializer.Deserialize<ClipCheckpointConfig>(r);
+    Console.WriteLine();
 
-                if (config is null)
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("\nConfig is empty. Continuing with default configuration...");
-                    Console.ResetColor();
+    // Now that we have a replay to compare to, we can run all files (except the chosen delta) compared to the delta.
+    Process(mainNode: nodes[mainIndex], deltaNode: nodes[deltaIndex]);
+}
 
-                    return new ClipCheckpointConfig();
-                }
+int GetIndex()
+{
+    // Index of the delta replay in string[] args
+    int index;
 
-                return config;
-            }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine(ex);
-                Console.WriteLine("\nContinuing with default configuration...");
-                Console.ResetColor();
+    // Loop till we get a real number that fits (is an int and is in range)
+    while (!int.TryParse(Console.ReadLine(), out index) || !IsInRange(nodes, index))
+    {
+        Console.Write("Didn't recieve a valid number! Try again. ");
+    }
 
-                return new ClipCheckpointConfig();
-            }
-        }
+    return index;
+}
 
-        var defaultConfig = new ClipCheckpointConfig();
+bool IsInRange<T>(T[] array, int index)
+{
+    return index >= 0 && index < array.Length;
+}
 
-        using var w = File.CreateText(configYml);
-        var serializer = new SerializerBuilder()
+void Process(CMwNod mainNode, CMwNod? deltaNode = null)
+{
+    var deltaExists = deltaNode is not null;
+
+    var config = GetOrCreateConfig();
+    var io = new ClipCheckpointIO(mainNode, config, deltaNode);
+
+    CGameCtnMediaClip result;
+
+    try
+    {
+        result = io.Execute();
+    }
+    catch (NoGhostException ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(ex.Message);
+        Console.ResetColor();
+        return;
+    }
+    catch (NoCheckpointsException ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(ex.Message);
+        Console.ResetColor();
+        return;
+    }
+    catch (Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine(ex);
+        Console.ResetColor();
+        return;
+    }
+
+    var newFileName = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(mainNode!.GBX!.FileName)) + suffix + ".Clip.Gbx";
+
+    if (!string.IsNullOrWhiteSpace(outputFolder))
+        newFileName = Path.Combine(outputFolder, newFileName);
+
+    Directory.CreateDirectory(outputFolder);
+
+    result.Save(newFileName, remap: config.Legacy ? IDRemap.TrackMania2006 : IDRemap.Latest);
+}
+
+ClipCheckpointConfig GetOrCreateConfig()
+{
+    var configYml = Path.Combine(rootPath, "Config.yml");
+
+    if (File.Exists(configYml))
+    {
+        using var r = File.OpenText(configYml);
+        var deserializer = new DeserializerBuilder()
             .WithTypeConverter(new TimeSpanConverter())
             .WithTypeConverter(new Vec2Converter())
             .WithTypeConverter(new Vec3Converter())
             .Build();
-        serializer.Serialize(w, defaultConfig);
 
-        return defaultConfig;
+        try
+        {
+            var config = deserializer.Deserialize<ClipCheckpointConfig>(r);
+
+            if (config is null)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nConfig is empty. Continuing with default configuration...");
+                Console.ResetColor();
+
+                return new ClipCheckpointConfig();
+            }
+
+            return config;
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(ex);
+            Console.WriteLine("\nContinuing with default configuration...");
+            Console.ResetColor();
+
+            return new ClipCheckpointConfig();
+        }
     }
+
+    var defaultConfig = new ClipCheckpointConfig();
+
+    using var w = File.CreateText(configYml);
+    var serializer = new SerializerBuilder()
+        .WithTypeConverter(new TimeSpanConverter())
+        .WithTypeConverter(new Vec2Converter())
+        .WithTypeConverter(new Vec3Converter())
+        .Build();
+    serializer.Serialize(w, defaultConfig);
+
+    return defaultConfig;
 }
+
+#endregion
