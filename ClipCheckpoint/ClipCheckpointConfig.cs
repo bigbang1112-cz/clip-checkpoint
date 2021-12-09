@@ -45,7 +45,7 @@ public class ClipCheckpointConfig
     public Vec3 LapTimeColor { get; set; } = (1, 1, 0);
 
     [YamlMember(Description = "Position offset of the delta time text (added on Position).")]
-    public Vec2 DeltaTimePositionOffset { get; set; } = (0.1f, -0.1f);
+    public Vec2 DeltaTimePositionOffset { get; set; } = (0, -0.1f);
 
     [YamlMember(Description = "Scale of the delta time text (multiplied on Scale).")]
     public Vec2 DeltaTimeScale { get; set; } = (0.75f, 0.75f);
