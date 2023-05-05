@@ -1,0 +1,20 @@
+﻿@using System.Web;
+
+@inject NavigationManager NavMgr
+
+<a href="/logout?redirectUri=@redirectUri" class="button menu-button">Logout</a>
+
+@code {
+    private string? redirectUri;
+
+    protected override void OnInitialized()
+    {
+        redirectUri = HttpUtility.UrlEncode(NavMgr.Uri);
+
+        NavMgr.LocationChanged += (sender, args) =>
+        {
+            redirectUri = HttpUtility.UrlEncode(NavMgr.Uri);
+            StateHasChanged();
+        };
+    }
+}

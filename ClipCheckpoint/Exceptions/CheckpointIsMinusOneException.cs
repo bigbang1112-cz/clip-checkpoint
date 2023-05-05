@@ -1,25 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace ClipCheckpoint.Exceptions;
 
-namespace BigBang1112.ClipCheckpoint.Exceptions;
-
+[Serializable]
 public class CheckpointIsMinusOneException : Exception
 {
-    public CheckpointIsMinusOneException() : base(message: "The checkpoint time is not valid and the process cannot continue.")
-    {
-
-    }
-
-    public CheckpointIsMinusOneException(string? message) : base(message)
-    {
-
-    }
-
-    public CheckpointIsMinusOneException(string? message, Exception? innerException) : base(message, innerException)
-    {
-
-    }
+	public CheckpointIsMinusOneException() : this("The checkpoint time is not valid and the process cannot continue.") { }
+	public CheckpointIsMinusOneException(string message) : base(message) { }
+	public CheckpointIsMinusOneException(string message, Exception inner) : base(message, inner) { }
+	protected CheckpointIsMinusOneException(
+	  System.Runtime.Serialization.SerializationInfo info,
+	  System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 }

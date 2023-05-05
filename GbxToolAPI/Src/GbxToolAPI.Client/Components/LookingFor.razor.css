@@ -1,0 +1,56 @@
+h3 {
+    margin: 20px 0 10px 0;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.import-looking-for-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px 40px;
+    width: max-content;
+    margin: 0 auto;
+    font-size: 1.5rem;
+}
+
+.import-looking-for-params {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 15px;
+}
+
+.import-looking-for-param {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 0 20px;
+    height: 90px;
+}
+
+    .import-looking-for-param .param-type {
+        font-size: 0.8rem;
+        background: #3335;
+        color: var(--class-type-color);
+        width: min-content;
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+
+.proceed-specific {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 90px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+    .proceed-specific:disabled {
+        color: gray;
+        cursor: not-allowed;
+    }

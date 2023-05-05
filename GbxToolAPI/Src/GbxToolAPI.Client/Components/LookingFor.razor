@@ -1,0 +1,75 @@
+﻿<h3>Looking for:</h3>
+<div class="import-looking-for-grid">
+
+    @foreach (var importType in ImportTypes)
+    {
+        var parameters = importType.Parameters;
+
+        <div class="import-looking-for-params darker-bg">
+
+            @{
+                var allFilesImportedAndValid = true;
+            }
+
+            @for (var i = 0; i < parameters.Count; i++)
+            {
+                var p = parameters[i];
+                var importedFile = p.ImportedFiles.Length > 0;
+
+                if (!importedFile || importType.Invalid)
+                {
+                    allFilesImportedAndValid = false;
+                }
+
+                @if (i > 0)
+                {
+                    <div class="symbol">+</div>
+                }
+
+                <div class="rectangle import-looking-for-param @(importType.Invalid && p.ImportedFiles.Length > 1 ? "highlighted-red" : "") @(!importType.Invalid && importedFile ? "highlighted" : "")">
+                    <div style="display:flex;align-items:center;">
+
+                        <ExtensionDisplay Parameter="p"></ExtensionDisplay>
+
+                        @if (p.Multiple)
+                        {
+                            <img src="img/multiple.svg" width="20" style="margin-left: 10px;" />
+                        }
+
+
+                    </div>
+
+                    @if (p.IsNodeType)
+                    {
+                        <div class="param-type">@p.TypeName</div>
+                    }
+                </div>
+
+            }
+
+            <div class="symbol">
+                →
+            </div>
+
+            @if (allFilesImportedAndValid)
+            {
+                <div class="rectangle proceed-specific highlighted-green" title="This method will be used.">
+                    <img src="img/checkmark.svg" width="24" />
+                </div>
+            }
+            else
+            {
+                <button class="rectangle proceed-specific @(importType.Invalid ? "highlighted-red" : "")" title="@(importType.Invalid ? "Parameters have been assigned incorrectly." : "No file has been selected for this method.")" disabled>
+                    <img src="img/x.svg" width="24" />
+                </button>
+            }
+        </div>
+
+    }
+</div>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<UtilImportType> ImportTypes { get; set; } = Enumerable.Empty<UtilImportType>();
+}

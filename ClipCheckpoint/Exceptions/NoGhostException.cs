@@ -1,26 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace ClipCheckpoint.Exceptions;
 
-namespace BigBang1112.ClipCheckpoint.Exceptions;
-
+[Serializable]
 public class NoGhostException : Exception
 {
-    public NoGhostException() : base(message: "No ghost was found.")
-    {
-
-    }
-
-    public NoGhostException(string? message) : base(message)
-    {
-
-    }
-
-    public NoGhostException(string? message, Exception? innerException) : base(message, innerException)
-    {
-
-    }
+    public NoGhostException() : this("No ghost was found.") { }
+    public NoGhostException(string message) : base(message) { }
+    public NoGhostException(string message, Exception inner) : base(message, inner) { }
+    protected NoGhostException(
+      System.Runtime.Serialization.SerializationInfo info,
+      System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 }

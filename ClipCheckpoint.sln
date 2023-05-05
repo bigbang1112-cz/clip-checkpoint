@@ -1,43 +1,43 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.0.31912.275
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipCheckpoint", "ClipCheckpoint\ClipCheckpoint.csproj", "{0BF859D2-2573-40F4-AC9E-703CEEAC0836}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipCheckpoint", "ClipCheckpoint\ClipCheckpoint.csproj", "{2836F58A-0471-49EA-815C-6CC9209753F4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B787CCCF-8357-4D7A-87AB-FB1B52E7F35B}"
-	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-		LICENSE = LICENSE
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GbxToolAPI", "GbxToolAPI\Src\GbxToolAPI\GbxToolAPI.csproj", "{16FB486E-3B45-46A0-B765-356D182B30DE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipCheckpointCLI", "ClipCheckpointCLI\ClipCheckpointCLI.csproj", "{63EFB2E4-10E3-4390-86A3-16D98849D149}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GbxToolAPI.CLI", "GbxToolAPI\Src\GbxToolAPI.CLI\GbxToolAPI.CLI.csproj", "{0F662F75-12DA-48C7-906F-F7816622FF66}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Debug|x64.Build.0 = Debug|Any CPU
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Debug|x86.Build.0 = Debug|Any CPU
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Release|x64.ActiveCfg = Release|Any CPU
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Release|x64.Build.0 = Release|Any CPU
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Release|x86.ActiveCfg = Release|Any CPU
-		{0BF859D2-2573-40F4-AC9E-703CEEAC0836}.Release|x86.Build.0 = Release|Any CPU
+		{2836F58A-0471-49EA-815C-6CC9209753F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2836F58A-0471-49EA-815C-6CC9209753F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2836F58A-0471-49EA-815C-6CC9209753F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2836F58A-0471-49EA-815C-6CC9209753F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16FB486E-3B45-46A0-B765-356D182B30DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16FB486E-3B45-46A0-B765-356D182B30DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16FB486E-3B45-46A0-B765-356D182B30DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16FB486E-3B45-46A0-B765-356D182B30DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63EFB2E4-10E3-4390-86A3-16D98849D149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63EFB2E4-10E3-4390-86A3-16D98849D149}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63EFB2E4-10E3-4390-86A3-16D98849D149}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63EFB2E4-10E3-4390-86A3-16D98849D149}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F662F75-12DA-48C7-906F-F7816622FF66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F662F75-12DA-48C7-906F-F7816622FF66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F662F75-12DA-48C7-906F-F7816622FF66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F662F75-12DA-48C7-906F-F7816622FF66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F57CCFDF-2A72-49AD-B9D0-3DC79A3CFA80}
+		SolutionGuid = {0DA826DE-FCBE-455E-AA1F-7DA72443DB63}
 	EndGlobalSection
 EndGlobal

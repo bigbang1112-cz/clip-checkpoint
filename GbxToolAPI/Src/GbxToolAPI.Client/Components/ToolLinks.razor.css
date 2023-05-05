@@ -1,0 +1,9 @@
+.links {
+    display: flex;
+    gap: 10px;
+}
+
+.download {
+    font-weight: bold;
+    border: 2px dotted var(--button-blue-edge);
+}

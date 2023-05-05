@@ -1,0 +1,28 @@
+.button-util {
+    font-size: 0.8rem;
+}
+
+h4 {
+    text-align: center;
+}
+
+.config {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    height: min-content;
+}
+
+.config-grid {
+    display: grid;
+    grid-template-columns: 50% 1fr;
+    grid-gap: 4px 10px;
+    overflow: auto;
+    margin: 5px;
+}
+
+.config-bar {
+    display: flex;
+    height: 28px;
+    gap: 5px;
+}
