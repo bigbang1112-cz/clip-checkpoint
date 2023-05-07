@@ -5,11 +5,7 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipCheckpoint", "ClipCheckpoint\ClipCheckpoint.csproj", "{2836F58A-0471-49EA-815C-6CC9209753F4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GbxToolAPI", "GbxToolAPI\Src\GbxToolAPI\GbxToolAPI.csproj", "{16FB486E-3B45-46A0-B765-356D182B30DE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipCheckpointCLI", "ClipCheckpointCLI\ClipCheckpointCLI.csproj", "{63EFB2E4-10E3-4390-86A3-16D98849D149}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GbxToolAPI.CLI", "GbxToolAPI\Src\GbxToolAPI.CLI\GbxToolAPI.CLI.csproj", "{0F662F75-12DA-48C7-906F-F7816622FF66}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +17,10 @@ Global
 		{2836F58A-0471-49EA-815C-6CC9209753F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2836F58A-0471-49EA-815C-6CC9209753F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2836F58A-0471-49EA-815C-6CC9209753F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{16FB486E-3B45-46A0-B765-356D182B30DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16FB486E-3B45-46A0-B765-356D182B30DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16FB486E-3B45-46A0-B765-356D182B30DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16FB486E-3B45-46A0-B765-356D182B30DE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{63EFB2E4-10E3-4390-86A3-16D98849D149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{63EFB2E4-10E3-4390-86A3-16D98849D149}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63EFB2E4-10E3-4390-86A3-16D98849D149}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63EFB2E4-10E3-4390-86A3-16D98849D149}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0F662F75-12DA-48C7-906F-F7816622FF66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F662F75-12DA-48C7-906F-F7816622FF66}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F662F75-12DA-48C7-906F-F7816622FF66}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F662F75-12DA-48C7-906F-F7816622FF66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
