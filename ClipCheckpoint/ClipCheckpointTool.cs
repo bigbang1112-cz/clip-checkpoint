@@ -28,7 +28,7 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
         map = replay.Challenge;
     }
 
-    public ClipCheckpointTool(IEnumerable<CGameCtnReplayRecord> replays) : this(replays.SelectMany(x => x.GetGhosts()))
+    public ClipCheckpointTool(IEnumerable<CGameCtnReplayRecord> replays) : this(replays.SelectMany(x => x.GetGhosts().Take(1)))
     {
         this.replays = replays;
         map = replays.First().Challenge;
