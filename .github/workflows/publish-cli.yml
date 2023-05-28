@@ -10,6 +10,7 @@ env:
   
 permissions:
   contents: write # important for release description edit and asset upload
+  packages: read
 
 jobs:
   prepare-description:
