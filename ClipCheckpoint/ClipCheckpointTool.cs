@@ -239,7 +239,7 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
         var author = ghost.GhostNickname ?? ghost.GhostLogin ?? "unnamed";
 
         var pureFileName = $"ClipCheckpoint_{TextFormatter.Deformat(mapName)}_{raceTime}_{TextFormatter.Deformat(author)}.Clip.Gbx";
-        var validFileName = string.Join("_", pureFileName.Split(Path.GetInvalidFileNameChars()));
+        var validFileName = string.Join("_", RegexUtils.GetExtendedAsciiValid(pureFileName).Split(Path.GetInvalidFileNameChars()));
 
         var forManiaPlanet = GameVersion.IsManiaPlanet(ghost);
         var dir = forManiaPlanet ? "Replays/Clips/ClipCheckpoint" : "Tracks/ClipCheckpoint";
