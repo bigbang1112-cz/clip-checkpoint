@@ -129,20 +129,28 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
                 throw new CheckpointIsMinusOneException();
             }
 
-            // Lap MT blocks - if lap race - and an unique lap time was reached
-            if (isMultilap && i >= checkpointCountPerLap)
+            if (isMultilap)
             {
-                // Index to use for assinging to the lap MT block array
-                var index = i - checkpointCountPerLap;
+                if ((i + 1) % checkpointCountPerLap == 0)
+                {
+                    //Console.WriteLine("-> Lap checkpoint.");
+                }
 
-                //Console.Write("-> Creating lap text media block... ");
-                textMultilapMediaBlocks[index] = CreateLapMediaBlock(
-                    time,
-                    checkpoints,
-                    currentCheckpointIndex: i,
-                    checkpointCountPerLap,
-                    isFromTM2);
-                //Console.WriteLine("Done");
+                // Lap MT blocks - if lap race - and an unique lap time was reached
+                if (i >= checkpointCountPerLap)
+                {
+                    // Index to use for assinging to the lap MT block array
+                    var index = i - checkpointCountPerLap;
+
+                    //Console.Write("-> Creating lap text media block... ");
+                    textMultilapMediaBlocks[index] = CreateLapMediaBlock(
+                        time,
+                        checkpoints,
+                        currentCheckpointIndex: i,
+                        checkpointCountPerLap,
+                        isFromTM2);
+                    //Console.WriteLine("Done");
+                }
             }
 
             if (deltaGhost is not null)
