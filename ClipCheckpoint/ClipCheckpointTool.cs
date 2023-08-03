@@ -133,6 +133,7 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
             {
                 if ((i + 1) % checkpointCountPerLap == 0)
                 {
+                    var lapNumber = (i + 1) / checkpointCountPerLap + 1;
                     //Console.WriteLine("-> Lap checkpoint.");
                 }
 
