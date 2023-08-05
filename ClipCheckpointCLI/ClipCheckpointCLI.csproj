@@ -29,7 +29,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\ClipCheckpoint\ClipCheckpoint.csproj" />
+		<ProjectReference Include="..\ClipCheckpoint\ClipCheckpoint.csproj">
+			<IsTrimmable>false</IsTrimmable>
+		</ProjectReference>
 	</ItemGroup>
 
 	<ItemGroup>
