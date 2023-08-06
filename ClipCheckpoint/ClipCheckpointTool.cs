@@ -5,8 +5,10 @@ using GBX.NET.Engines.Control;
 using GBX.NET.Engines.Game;
 using GbxToolAPI;
 using System.Diagnostics;
+using System.Drawing;
 using System.Xml;
 using TmEssentials;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ClipCheckpoint;
 
@@ -112,6 +114,10 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
         var textDeltaMediaBlocks = new CGameCtnMediaBlockText[deltaGhost is null ? 0 : checkpoints.Length];
         var soundMediaBlocks = new CGameCtnMediaBlockSound[Config.IncludeSound ? checkpointCount : 0];
 
+        var textMultilapCrossMediaBlocks = new CGameCtnMediaBlockText[laps > 0 ? laps - 1 : 0];
+        var textMultilapCounterMediaBlocks = new CGameCtnMediaBlockText[isMultilap ? laps : 0];
+        var lapCounterStartTime = TimeSingle.Zero;
+
         for (var i = 0; i < checkpoints.Length; i++)
         {
             //Console.WriteLine("Checkpoint {0}:", i + 1);
@@ -129,20 +135,41 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
                 throw new CheckpointIsMinusOneException();
             }
 
-            // Lap MT blocks - if lap race - and an unique lap time was reached
-            if (isMultilap && i >= checkpointCountPerLap)
+            if (isMultilap)
             {
-                // Index to use for assinging to the lap MT block array
-                var index = i - checkpointCountPerLap;
+                if ((i + 1) % checkpointCountPerLap == 0)
+                {
+                    var lapNumber = (i + 1) / checkpointCountPerLap + 1;
+                    //Console.WriteLine("-> Lap checkpoint.");
 
-                //Console.Write("-> Creating lap text media block... ");
-                textMultilapMediaBlocks[index] = CreateLapMediaBlock(
-                    time,
-                    checkpoints,
-                    currentCheckpointIndex: i,
-                    checkpointCountPerLap,
-                    isFromTM2);
-                //Console.WriteLine("Done");
+                    //Console.Write("-> Creating lap text media block... ");
+                    if (Config.IncludeLapCross && lapNumber <= laps)
+                    {
+                        textMultilapCrossMediaBlocks[lapNumber - 2] = CreateLapCrossMediaBlock(time, lapNumber, laps);
+                    }
+
+                    if (Config.IncludeLapCounter)
+                    {
+                        textMultilapCounterMediaBlocks[lapNumber - 2] = CreateLapCounterMediaBlock(lapCounterStartTime, time, lapNumber - 1, laps);
+                        lapCounterStartTime = time;
+                    }
+                }
+
+                // Lap MT blocks - if lap race - and an unique lap time was reached
+                if (i >= checkpointCountPerLap)
+                {
+                    // Index to use for assinging to the lap MT block array
+                    var index = i - checkpointCountPerLap;
+
+                    //Console.Write("-> Creating lap text media block... ");
+                    textMultilapMediaBlocks[index] = CreateLapMediaBlock(
+                        time,
+                        checkpoints,
+                        currentCheckpointIndex: i,
+                        checkpointCountPerLap,
+                        isFromTM2);
+                    //Console.WriteLine("Done");
+                }
             }
 
             if (deltaGhost is not null)
@@ -197,7 +224,7 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
         }
 
         //Console.Write("Cleaning up overlapping... ");
-        ClearOverlappingOnText(textMediaBlocks, textShadowMediaBlocks, textMultilapMediaBlocks, textDeltaMediaBlocks);
+        ClearOverlappingOnText(textMediaBlocks, textShadowMediaBlocks, textMultilapMediaBlocks, textDeltaMediaBlocks, textMultilapCrossMediaBlocks);
         ClearOverlappingOnSound(soundMediaBlocks);
         //Console.WriteLine("Done");
 
@@ -227,6 +254,16 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
         {
             //Console.Write("Creating media track for the multilap media blocks... ");
             trackList.Add(CreateMediaTrack(textMultilapMediaBlocks, name: Config.Dictionary.MediaTrackerTrackCheckpointLap));
+
+            if (Config.IncludeLapCross)
+            {
+                trackList.Add(CreateMediaTrack(textMultilapCrossMediaBlocks, name: Config.Dictionary.MediaTrackerTrackCheckpointLapCross));
+            }
+
+            if (Config.IncludeLapCounter)
+            {
+                trackList.Add(CreateMediaTrack(textMultilapCounterMediaBlocks, name: Config.Dictionary.MediaTrackerTrackCheckpointLapCounter));
+            }
             //Console.WriteLine("Done");
         }
 
@@ -364,6 +401,83 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
             offsetPosition: Config.LapTimePositionOffset,
             color: Config.LapTimeColor,
             scale: Config.LapTimeScale);
+    }
+
+    private CGameCtnMediaBlockText CreateLapCrossMediaBlock(TimeInt32 time, int lapNumber, int laps)
+    {
+        var lapText = string.Format(Config.TextLapCrossFormat, lapNumber, laps);
+
+        return CreateCheckpointTextMediaBlock(time,
+            lapText,
+            offsetPosition: Config.LapCrossPositionOffset,
+            color: Config.LapCrossColor,
+            scale: Config.LapCrossScale);
+    }
+
+    private CGameCtnMediaBlockText CreateLapCounterMediaBlock(TimeSingle startTime, TimeSingle endTime, int lapNumber, int laps)
+    {
+        var lapText = string.Format(Config.TextLapCounterFormat, lapNumber, laps);
+
+        var position = Config.LapCounterPosition * (Config.AspectRatio.Y / Config.AspectRatio.X, 1);
+
+        var keys = new List<CControlEffectSimi.Key>
+        {
+            new CControlEffectSimi.Key
+            {
+                Time = startTime + (lapNumber == 1 ? Config.AnimationInLength : TimeSingle.Zero),
+                Opacity = 1,
+                Position = position,
+                Scale = Config.LapCounterScale,
+                Depth = Config.Depth
+            },
+            new CControlEffectSimi.Key
+            {
+                Time = endTime,
+                Opacity = 1,
+                Position = position,
+                Scale = Config.LapCounterScale,
+                Depth = Config.Depth
+            }
+        };
+
+        if (lapNumber == 1)
+        {
+            keys.Insert(0, new CControlEffectSimi.Key
+            {
+                Time = startTime,
+                Opacity = 0,
+                Position = position,
+                Scale = Config.LapCounterScale,
+                Depth = Config.Depth
+            });
+        }
+        else if (lapNumber == laps)
+        {
+            keys.Add(new CControlEffectSimi.Key
+            {
+                Time = endTime + Config.AnimationOutLength,
+                Opacity = 0,
+                Position = position,
+                Scale = Config.LapCounterScale,
+                Depth = Config.Depth
+            });
+        }
+
+        var effectBuilder = CControlEffectSimi.Create()
+            .WithKeys(keys)
+            .Centered();
+
+        var effect = Config.Legacy
+            ? effectBuilder.ForTMSX().Build()
+            : effectBuilder.ForTMUF().Interpolated().Build();
+
+        var mediaBlockBuilder = CGameCtnMediaBlockText.Create(effect)
+            .WithText(lapText)
+            .WithColor(new(Config.LapCounterColor.X, Config.LapCounterColor.Y, Config.LapCounterColor.Z));
+
+        return Config.Legacy
+            ? mediaBlockBuilder.ForTMSX().Build()
+            : mediaBlockBuilder.ForTMUF().Build();
     }
 
     private CGameCtnMediaBlockSound CreateCheckpointSoundMediaBlock(TimeSpan time, FileRef soundFileRef)

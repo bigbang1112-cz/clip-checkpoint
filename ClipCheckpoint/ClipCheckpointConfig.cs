@@ -45,9 +45,29 @@ public class ClipCheckpointConfig : Config, IHasTextDictionary<ClipCheckpointDic
     [YamlMember(Description = "Scale of the lap time text (multiplied on Scale).")]
     public Vec2 LapTimeScale { get; set; } = (0.75f, 0.75f);
 
-    [YamlMember(Description = "Color of the main checkpoint time.")]
+    [YamlMember(Description = "Color of the lap time.")]
     [Color]
     public Vec4 LapTimeColor { get; set; } = (1, 1, 0, 1);
+
+    [YamlMember(Description = "Position offset of the lap crossing text (added on Position).")]
+    public Vec2 LapCrossPositionOffset { get; set; } = (0, 0.2f);
+
+    [YamlMember(Description = "Scale of the lap crossing text (multiplied on Scale).")]
+    public Vec2 LapCrossScale { get; set; } = (0.7f, 0.75f);
+
+    [YamlMember(Description = "Color of the lap crossing.")]
+    [Color]
+    public Vec4 LapCrossColor { get; set; } = (1, 1, 1, 1);
+
+    [YamlMember(Description = "Position offset of the lap counting text (added on Position).")]
+    public Vec2 LapCounterPosition { get; set; } = (-1.5f, 0.2f);
+
+    [YamlMember(Description = "Scale of the lap counting text (multiplied on Scale).")]
+    public Vec2 LapCounterScale { get; set; } = (0.95f, 1);
+
+    [YamlMember(Description = "Color of the lap counting.")]
+    [Color]
+    public Vec4 LapCounterColor { get; set; } = (1, 1, 1, 1);
 
     [YamlMember(Description = "Position offset of the delta time text (added on Position).")]
     public Vec2 DeltaTimePositionOffset { get; set; } = (0, -0.1f);
@@ -85,6 +105,12 @@ public class ClipCheckpointConfig : Config, IHasTextDictionary<ClipCheckpointDic
     [YamlMember(Description = "If the sound should be included.")]
     public bool IncludeSound { get; set; } = true;
 
+    [YamlMember(Description = "If the lap cross should be included.")]
+    public bool IncludeLapCross { get; set; } = true;
+
+    [YamlMember(Description = "If the lap counter should be included.")]
+    public bool IncludeLapCounter { get; set; } = true;
+
     [YamlMember(Description = "Format of the main checkpoint time text. {0} is the time (X:XX.XXX or X:XX.XX)")]
     public string TextCheckpointFormat { get; set; } = "$o$n{0}";
 
@@ -96,6 +122,12 @@ public class ClipCheckpointConfig : Config, IHasTextDictionary<ClipCheckpointDic
 
     [YamlMember(Description = "Format of the stunts score addition to the main checkpoint time text. {0} is the stunts score.")]
     public string TextStuntsFormat { get; set; } = "({0} pts.)";
+
+    [YamlMember(Description = "Format of the lap crossing text. {0} is the entering lap, {1} is total amount of laps.")]
+    public string TextLapCrossFormat { get; set; } = "$sLap {0}/{1}";
+
+    [YamlMember(Description = "Format of the lap counting text. {0} is the entering lap, {1} is total amount of laps.")]
+    public string TextLapCounterFormat { get; set; } = "$s{0} / {1}";
 
     /*[YamlMember(Description = "URL location of the regular checkpoint sound (must be ogg).")]
     public string CheckpointSoundUrl { get; set; } = "https://bigbang1112.cz/temp/RaceCheckPoint.ogg";
