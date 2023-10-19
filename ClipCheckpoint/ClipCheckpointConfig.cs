@@ -76,7 +76,7 @@ public class ClipCheckpointConfig : Config, IHasTextDictionary<ClipCheckpointDic
     public Vec2 DeltaTimeScale { get; set; } = (0.75f, 0.75f);
 
     [YamlMember(Description = "Position offset of the delta delta time text (added on Position).")]
-    public Vec2 DeltaDeltaTimePositionOffset { get; set; } = (0, -0.2f);
+    public Vec2 DeltaDeltaTimePositionOffset { get; set; } = (0, -0.17f);
 
     [YamlMember(Description = "Scale of the delta delta time text (multiplied on Scale).")]
     public Vec2 DeltaDeltaTimeScale { get; set; } = (0.75f, 0.75f);
