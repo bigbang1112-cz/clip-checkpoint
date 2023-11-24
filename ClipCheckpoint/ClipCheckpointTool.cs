@@ -112,11 +112,14 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
         var textShadowMediaBlocks = new CGameCtnMediaBlockText[checkpointCount]; // TODO: layering
         var textMultilapMediaBlocks = new CGameCtnMediaBlockText[checkpoints.Length - checkpointCountPerLap];
         var textDeltaMediaBlocks = new CGameCtnMediaBlockText[deltaGhost is null ? 0 : checkpoints.Length];
+        var textDeltaDeltaMediaBlocks = new CGameCtnMediaBlockText[deltaGhost is null ? 0 : checkpoints.Length - 1];
         var soundMediaBlocks = new CGameCtnMediaBlockSound[Config.IncludeSound ? checkpointCount : 0];
 
         var textMultilapCrossMediaBlocks = new CGameCtnMediaBlockText[laps > 0 ? laps - 1 : 0];
         var textMultilapCounterMediaBlocks = new CGameCtnMediaBlockText[isMultilap ? laps : 0];
         var lapCounterStartTime = TimeSingle.Zero;
+
+        var prevDeltaTime = default(TimeInt32?);
 
         for (var i = 0; i < checkpoints.Length; i++)
         {
@@ -180,6 +183,13 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
                 var interval = cp.Time.GetValueOrDefault() - otherGhostTime;
 
                 textDeltaMediaBlocks[i] = CreateDeltaMediaBlock(time, isFromTM2, interval);
+
+                if (prevDeltaTime.HasValue)
+                {
+                    textDeltaDeltaMediaBlocks[i - 1] = CreateDeltaDeltaMediaBlock(time, isFromTM2, interval - prevDeltaTime.Value);
+                }
+
+                prevDeltaTime = interval;
             }
 
             // If the REAL checkpoint count was reached, ignore the rest of the checkpoints array
@@ -241,6 +251,13 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
             //Console.Write("Creating media track for the delta text media blocks... ");
             trackList.Add(CreateMediaTrack(textDeltaMediaBlocks, name: Config.Dictionary.MediaTrackerTrackCheckpointDelta));
             //Console.WriteLine("Done");
+
+            if (Config.IncludeDeltaDelta)
+            {
+                //Console.Write("Creating media track for the delta delta text media blocks... ");
+                trackList.Add(CreateMediaTrack(textDeltaDeltaMediaBlocks, name: Config.Dictionary.MediaTrackerTrackCheckpointDeltaDelta));
+                //Console.WriteLine("Done");
+            }
         }
 
         if (Config.IncludeSound)
@@ -284,7 +301,7 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
         return new(clip, $"{dir}/{validFileName}", forManiaPlanet);
     }
 
-    private CGameCtnMediaBlockText CreateDeltaMediaBlock(TimeSpan time, bool isFromTM2, TimeSpan interval)
+    private CGameCtnMediaBlockText CreateDeltaMediaBlock(TimeSpan time, bool isFromTM2, TimeSpan interval, Vec2 offsetPosition, Vec2 scale)
     {
         var deltaTimeStr = interval.ToTmString(useHundredths: !isFromTM2);
         var isPositiveDelta = interval > TimeSpan.Zero;
@@ -302,14 +319,24 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
         //Console.Write("-> Creating checkpoint delta text media block ({0})... ", deltaTimeTextWithoutFormat);
         var mediaBlock = CreateCheckpointTextMediaBlock(time,
             deltaTimeText,
-            offsetPosition: Config.DeltaTimePositionOffset,
+            offsetPosition: offsetPosition,
             color: deltaColor,
-            scale: Config.DeltaTimeScale);
+            scale: scale);
         //Console.WriteLine("Done");
 
         return mediaBlock;
     }
-    
+
+    private CGameCtnMediaBlockText CreateDeltaMediaBlock(TimeSpan time, bool isFromTM2, TimeSpan interval)
+    {
+        return CreateDeltaMediaBlock(time, isFromTM2, interval, Config.DeltaTimePositionOffset, Config.DeltaTimeScale);
+    }
+
+    private CGameCtnMediaBlockText CreateDeltaDeltaMediaBlock(TimeSpan time, bool isFromTM2, TimeSpan interval)
+    {
+        return CreateDeltaMediaBlock(time, isFromTM2, interval, Config.DeltaDeltaTimePositionOffset, Config.DeltaDeltaTimeScale);
+    }
+
     private void ClearOverlappingOnText(params CGameCtnMediaBlockText[][] textMediaBlockSets)
     {
         foreach (var mediaBlocks in textMediaBlockSets)

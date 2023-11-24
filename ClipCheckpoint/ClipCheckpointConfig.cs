@@ -75,6 +75,12 @@ public class ClipCheckpointConfig : Config, IHasTextDictionary<ClipCheckpointDic
     [YamlMember(Description = "Scale of the delta time text (multiplied on Scale).")]
     public Vec2 DeltaTimeScale { get; set; } = (0.75f, 0.75f);
 
+    [YamlMember(Description = "Position offset of the delta delta time text (added on Position).")]
+    public Vec2 DeltaDeltaTimePositionOffset { get; set; } = (0, -0.17f);
+
+    [YamlMember(Description = "Scale of the delta delta time text (multiplied on Scale).")]
+    public Vec2 DeltaDeltaTimeScale { get; set; } = (0.75f, 0.75f);
+
     [YamlMember(Description = "Color of the delta minus checkpoint time text.")]
     [Color]
     public Vec4 DeltaNegativeColor { get; set; } = (0, 0, 1, 1);
@@ -110,6 +116,9 @@ public class ClipCheckpointConfig : Config, IHasTextDictionary<ClipCheckpointDic
 
     [YamlMember(Description = "If the lap counter should be included.")]
     public bool IncludeLapCounter { get; set; } = true;
+
+    [YamlMember(Description = "If the delta of delta should be included.")]
+    public bool IncludeDeltaDelta { get; set; } = false;
 
     [YamlMember(Description = "Format of the main checkpoint time text. {0} is the time (X:XX.XXX or X:XX.XX)")]
     public string TextCheckpointFormat { get; set; } = "$o$n{0}";
