@@ -109,7 +109,7 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Download a Build Artifact
         uses: actions/download-artifact@v4
