@@ -387,10 +387,10 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
     {
         var soundUrl = map?.Collection.ToString() switch
         {
-            "Alpine" => "https://gbx.bigbang1112.cz/assets/tools/clip-checkpoint/sounds/AlpineCheckPoint.ogg",
-            "Rally" => "https://gbx.bigbang1112.cz/assets/tools/clip-checkpoint/sounds/RallyCheckPoint.ogg",
-            "Speed" => "https://gbx.bigbang1112.cz/assets/tools/clip-checkpoint/sounds/SpeedCheckPoint.ogg",
-            _ => "https://gbx.bigbang1112.cz/assets/tools/clip-checkpoint/sounds/RaceCheckPoint.ogg"
+            "Alpine" => "https://gbx.bigbang1112.cz/assets/tools/clip-checkpoint/Sounds/AlpineCheckPoint.ogg",
+            "Rally" => "https://gbx.bigbang1112.cz/assets/tools/clip-checkpoint/Sounds/RallyCheckPoint.ogg",
+            "Speed" => "https://gbx.bigbang1112.cz/assets/tools/clip-checkpoint/Sounds/SpeedCheckPoint.ogg",
+            _ => "https://gbx.bigbang1112.cz/assets/tools/clip-checkpoint/Sounds/RaceCheckPoint.ogg"
         };
 
         return CreateSoundFileRef(soundUrl);
@@ -398,7 +398,7 @@ public class ClipCheckpointTool : ITool, IHasOutput<NodeFile<CGameCtnMediaClip>>
 
     private FileRef CreateLapSoundFileRef()
     {
-        return CreateSoundFileRef("https://gbx.bigbang1112.cz/assets/tools/clip-checkpoint/sounds/RaceLap.ogg");
+        return CreateSoundFileRef("https://gbx.bigbang1112.cz/assets/tools/clip-checkpoint/Sounds/RaceLap.ogg");
     }
 
     private FileRef CreateSoundFileRef(string soundUrl)
